@@ -1,6 +1,6 @@
 # LMG: Lumbar Model Generator
 
-![](docs/img/logos/logo.png){:width="100%"}     
+![LMG_logo](docs/img/logos/logo.png){:width="100%"}     
 
 Cite LMG:  [![Citing](https://zenodo.org/badge/DOI/10.5281/zenodo.44404.svg)](https://doi.org/10.5281/zenodo.44404)  
 
@@ -37,7 +37,7 @@ By running `install_LMG.m` the LMG and FEBio (if needed) path definitions will b
 * To access the help documentation from MATLAB click on the HELP browser then click o `LMG toolbox` under `Supplemental Software`. This will open the toolbox help and documentation which is now searchable and integrated just like the rest of MATLAB's help and documentation.  
 
 ## License <a name="License"></a>
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://github.com/LMG/master/LICENSE)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://github.com/CELavecchia/LMG/blob/master/LICENSE)
 
 ## Contributing <a name="Contributing"></a>
 Coming soon
