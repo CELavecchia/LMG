@@ -10,7 +10,7 @@ header-img: "img/home-bg.jpg"
 [__YOU! Join the team!__](https://github.com/CELavecchia/LMG/blob/master/CONTRIBUTING.md)   
 *Contributor*  
 Your description, Your affiliation   
-[![You](/img/member_avatars/question-mark.jpg){:width="150px"}](Your link here)   
+[![You](/img/member_avatars/question-mark.jpg){:width="150px"}](Your link here)    
 [![Email](/img/icons/email_icon.png){:width="25px"}](Email address here)
 [![ORCID](img/icons/orcid.png){:width="25px"}](orcid link here)
 [![Impactstory](img/icons/impactStory.png){:width="25px"}](impactStory link here)
@@ -20,8 +20,8 @@ Your description, Your affiliation
 ***  
 __Carolina E. Lavecchia__
 *Founder, lead developer*  
-Biomedical Engineer, University of Birmingham
-[![You](/img/member_avatars/question-mark.jpg){:width="150px"}](Your link here)   
+Biomedical Engineer, University of Birmingham    
+[![You](/img/member_avatars/question-mark.jpg){:width="150px"}](Your link here)    
 [![Email](/img/icons/email_icon.png){:width="25px"}](mailto:lavecchia.carolina@gmail.com)
 [![ORCID](img/icons/orcid.png){:width="25px"}](http://orcid.org/0000-0003-3768-4269)
 [![Impactstory](img/icons/impactStory.png){:width="25px"}](https://www.impactstory.org/u/0000-0003-3768-4269)
