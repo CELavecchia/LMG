@@ -21,8 +21,11 @@ Your description, Your affiliation
 __Carolina E. Lavecchia__
 *Founder, lead developer*  
 Biomedical Engineer, University of Birmingham    
-[![You](/img/member_avatars/question-mark.jpg){:width="150px"}](Your link here)    
+[![You](/img/member_avatars/cel_avatar.jpg){:width="150px"}](Your link here)    
 [![Email](/img/icons/email_icon.png){:width="25px"}](mailto:lavecchia.carolina@gmail.com)
+[![ORCID](img/icons/orcid.png){:width="25px"}](http://orcid.org/0000-0002-7755-8710)
+[![GitHub](img/icons/github-icon.png){:width="25px"}](https://github.com/CELavecchia)
+[![Twitter](img/icons/twitter.png){:width="25px"}](https://twitter.com/CarolinaEleo)  
 
 ***  
 [__Dr. Kevin M. Moerman__](https://www.kevinmoerman.org)    
