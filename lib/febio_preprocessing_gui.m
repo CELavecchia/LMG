@@ -1,5 +1,5 @@
 %% FEBio preprocessing - FU L1-L2-L3
-function FEB_struct = febio_preprocessing_gui(name, nbodies, Lmes, mesh_struct_IVD2)
+function FEB_struct = febio_preprocessing_gui(modelName, nbodies, Lmes, mesh_struct_IVD2)
 
 %%
 % fibres embedded
@@ -9,12 +9,15 @@ function FEB_struct = febio_preprocessing_gui(name, nbodies, Lmes, mesh_struct_I
 filePath=mfilename('fullpath');
 savePath=fullfile(fileparts(filePath));
 
-tolerance_par = [0.01];% 0.1 0.5 0.7 0.9];
+tolerance_par = [0.1];% 0.1 0.5 0.7 0.9];
 %contactPenalty = [5];
 %vp = [44 50 60];% 44 46 48 50 52 54 56 58 60];
 %for(j = 1:1)%length(vp))
-modelName=sprintf(name,name);
-struct_name = sprintf('%s.mat',name);
+
+defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+outputpathName=fullfile(defaultFolder,'data','output','mat');
+struct_name = fullfile(outputpathName,'model.mat');
+
 %%
 % Plot settings
 fontSize=15;
@@ -99,7 +102,7 @@ phi=90;
 
 
 % contact properties
-contactPenalty=10;
+contactPenalty=11;
 tolerance = tolerance_par(1);% 0.5;
 %{
 contactPenalty_up=7;
@@ -164,62 +167,15 @@ Fbnew4 = mesh_struct_IVD2(4).Fb;
 C4 = mesh_struct_IVD2(4).C;
 
 
-
-%% define positions
-
-%t1= [0 2 40];
-if nbodies == 2
-    t1= [0 2 40];
-    Lmes(2).VT = [Lmes(2).VT(:,1) Lmes(2).VT(:,2)-t1(2) Lmes(2).VT(:,3)-t1(3)];
-%t2 = [0 5 80];
-elseif nbodies ==3
-    t2 = [0 6 80];
-    Lmes(3).VT = [Lmes(3).VT(:,1) Lmes(3).VT(:,2)-t2(2) Lmes(3).VT(:,3)-t2(3)];
-end
-%patch('Faces',Lmes(1).FT,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).C,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);hold on; %solid tetra
-
-%patch('Faces',Lmes(1).Fb,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);%model boundaries
-%{
-move.L1 = Lmes(1).VT;
-move.L2 =Lmes(2).VT;
-move.L3 =Lmes(3).VT;
-move.I1 =VT;
-move.I2 =VT2;
-save('move.mat','move');
-%}
-%move closer
-%plot_matrix(Lmes(1).VT,'.b');
-%plot_matrix(Lmes(2).VT,'.g');
-%plot_matrix(Lmes(3).VT,'.r');
-
-VTstr.VT = VT;
-VTstr.VT = VT2;
-VTstr.VT = VT3;
-
-[Lmes,VTstr ] = pre_proc_position_gui(Lmes, VTstr, nbodies);
-
-VT = VTstr.VT;
-if nbodies ==2
-    VT = VTstr.VT;
-elseif nbodies ==3
-    VT2 = VTstr.VT2;
-end
-VT2(:,2) = VT2(:,2)- 2;
-
-
-%size(Lmes)
-%% define nodeset for the attachment points of the ligaments
+%% define nodeset for the attachment points of the ligaments  ----- move this function!!
 %ligam = attachment_points(Lmes);
-
-
-%add function
 
 
 %% join datasets
 
 %[x_node_IVD1, y_node_IVD1, x_node_IVD2, y_node_IVD2] = nodeset(VT,VT2);
 
-if nbodies ==2
+if nbodies ==2              % FU L1 - IVD1 - L2
     V = [Lmes(1).VT; Lmes(2).VT; VT];
     E1 = Lmes(1).E;
     E2 = Lmes(2).E + size(Lmes(1).VT,1);
@@ -241,7 +197,7 @@ if nbodies ==2
     
    
 
-elseif nbodies ==3
+elseif nbodies ==3          %  L1 - IVD1 - L2 - IVD2 - L3
     V = [Lmes(1).VT; Lmes(2).VT; Lmes(3).VT; VT; VT2];
     E1 = Lmes(1).E;
     E2 = Lmes(2).E + size(Lmes(1).VT,1);
@@ -260,20 +216,54 @@ elseif nbodies ==3
 
     febMatL3= Lmes(3).elementMaterialIndices;
     febMatL3(Lmes(3).elementMaterialIndices==-2)=1;
+    febMatL3(Lmes(3).elementMaterialIndices==-3)=2;
     
     E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1);%+ size(Lmes(4).VT,1)+ size(Lmes(5).VT,1); 
     E_ivd1 = [E_ivd1(:,5:8) E_ivd1(:,1:4)]; %it was inverted for febio
     E_ivd2 = E_Ivd2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(VT,1);% size(Lmes(4).V,1)+ size(Lmes(5).V,1) + size(VT,1); 
     E_ivd2 = [E_ivd2(:,5:8) E_ivd2(:,1:4)];%it was inverted for febio
 
+  
+elseif nbodies ==4          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4
+    V = [Lmes(1).VT; Lmes(2).VT; Lmes(3).VT; Lmes(4).VT; VT; VT2; VT3];
+    E1 = Lmes(1).E;
+    E2 = Lmes(2).E + size(Lmes(1).VT,1);
+    E3 = Lmes(3).E + size(Lmes(1).VT,1)+ size(Lmes(2).VT,1);
+    E4 = Lmes(4).E + size(Lmes(1).VT,1)+ size(Lmes(2).VT,1) + size(Lmes(3).VT,1);
+    Lmes(2).Fb = Lmes(2).Fb + size(Lmes(1).VT,1);
+    Lmes(3).Fb = Lmes(3).Fb + size(Lmes(1).VT,1)+size(Lmes(2).VT,1);
+    Lmes(4).Fb = Lmes(4).Fb + size(Lmes(1).VT,1)+size(Lmes(2).VT,1)+size(Lmes(3).VT,1);
+    Fbnew = Fbnew + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1) ;%IVD1
+    Fbnew2 = Fbnew2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1) + size(VT,1);%IVD2
+    Fbnew3 = Fbnew3 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1) + size(VT,1)+ size(VT2,1);%IVD3
     
+    febMatL1= Lmes(1).elementMaterialIndices;
+    febMatL1(Lmes(1).elementMaterialIndices==-2)=1;
+    febMatL1(Lmes(1).elementMaterialIndices==-3)=2;
+
+    febMatL2= Lmes(2).elementMaterialIndices;
+    febMatL2(Lmes(2).elementMaterialIndices==-2)=1;
+    febMatL2(Lmes(2).elementMaterialIndices==-3)=2;
+
+    febMatL3= Lmes(3).elementMaterialIndices;
+    febMatL3(Lmes(3).elementMaterialIndices==-2)=1;
+    febMatL3(Lmes(3).elementMaterialIndices==-3)=2;
+    
+    febMatL4= Lmes(4).elementMaterialIndices;
+    febMatL4(Lmes(4).elementMaterialIndices==-2)=1;
+    febMatL4(Lmes(4).elementMaterialIndices==-3)=2;
+    
+    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1); 
+    E_ivd1 = [E_ivd1(:,5:8) E_ivd1(:,1:4)]; %it was inverted for febio
+    E_ivd2 = E_Ivd2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1)+ size(VT,1)+ size(VT2,1);
+    E_ivd2 = [E_ivd2(:,5:8) E_ivd2(:,1:4)];%it was inverted for febio
+    E_ivd3 = E_Ivd3 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1)+ size(VT,1)+ size(VT2,1)+ size(VT3,1);
+    E_ivd3 = [E_ivd3(:,5:8) E_ivd3(:,1:4)];%it was inverted for febio
     
 
     
 end
-    %plot3(VT(:,1),VT(:,2),VT(:,3),'.r'),xlabel('x'),ylabel('y'),hold on;
-%plot3(VT(x_node_IVD1,1),VT(x_node_IVD1,2),VT(x_node_IVD1,3),'Ob'),hold on;
-
+    
 %nodeset for the output
 %{
 x_node_IVD1 =  x_node_IVD1 + size(Lmes(1).VT(:,1),1) +size(Lmes(2).VT(:,1),1)+ size(Lmes(3).VT(:,1),1);
@@ -373,7 +363,7 @@ febMatIVD(C==10)=5;
 febMatIVD(C==11)=5;
 
 
-
+%IVD2
 febMatIVD2= C2;
 febMatIVD2(C2==2)=3; %nucleus
 febMatIVD2(C2==3)=4;
@@ -386,6 +376,21 @@ febMatIVD2(C2==9)=4;
 %nucleus
 febMatIVD2(C2==10)=5;
 febMatIVD2(C2==11)=5;
+
+% IVD3
+febMatIVD3= C3;
+febMatIVD3(C3==2)=3; %nucleus
+febMatIVD3(C3==3)=4;
+febMatIVD3(C3==4)=3;
+febMatIVD3(C3==5)=4;
+febMatIVD3(C3==6)=3;
+febMatIVD3(C3==7)=4;
+febMatIVD3(C3==8)=3;
+febMatIVD3(C3==9)=4;
+%nucleus
+febMatIVD3(C3==10)=5;
+febMatIVD3(C3==11)=5;
+
 
 %% CREATING FIBRE DIRECTIONS
 %{
@@ -582,8 +587,7 @@ drawnow;
 
 model.V = V; %vert
     model.E1 = E1; model.E2 = E2; 
-    
-      model.E_ivd1 = E_ivd1; 
+    model.E_ivd1 = E_ivd1; 
     model.Fb1 = Lmes(1).Fb; model.Fb2 = Lmes(2).Fb;
     model.matind1 =febMatL1; model.matind2 =febMatL2;
     model.Cb = Lmes(1).Cb; model.Cb2 = Lmes(2).Cb ; 
@@ -601,6 +605,21 @@ model.V = V; %vert
          model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
           model.Fb3 = Lmes(3).Fb; %faces vert
           model.Cb3 = Lmes(3).Cb; % cb vert
+    elseif nbodies ==4
+         model.E4 = E4;model.E_ivd3 = E_ivd3; %elements
+         model.matind4 =febMatL4; %mat ind vert
+         model.FbI3 = febMatIVD3;    %mat ind IVD
+         model.bcI3 = mesh_struct_IVD2(3).faceBoundaryMarker; %bc IVD
+          model.Fb4 = Lmes(4).Fb; %faces vert
+          model.Cb4 = Lmes(4).Cb; % cb vert
+    elseif nbodies ==5
+         model.E5 = E5;model.E_ivd4 = E_ivd4; %elements
+         model.matind5 =febMatL5; %mat ind vert
+         model.FbI4 = febMatIVD4;    %mat ind IVD
+         model.bcI4 = mesh_struct_IVD2(4).faceBoundaryMarker; %bc IVD
+          model.Fb5 = Lmes(5).Fb; %faces vert
+          model.Cb5 = Lmes(5).Cb; % cb vert 
+        
         
     end
     
@@ -1156,8 +1175,8 @@ FEB_struct.Loads.Surface_load{1}.lc=1;
 
 FEB_struct.disp_opt=0; %Turn on displaying of progress
 
-febStruct2febFile_mod2(FEB_struct);
-%{
+febStruct2febFile(FEB_struct);
+
 %% run FEBio
  %% run FEBio
     FEBioRunStruct.run_filename=FEB_struct.run_filename;
@@ -1168,10 +1187,10 @@ febStruct2febFile_mod2(FEB_struct);
     FEBioRunStruct.t_check=5; %Time for checking log file (dont set too small)
     FEBioRunStruct.maxtpi=1e99; %Max analysis time
     FEBioRunStruct.maxLogCheckTime=10; %Max log file checking time
-    FEBioRunStruct.FEBioPath='C:\Program Files\febio-2.5.1\bin\febio2.exe';
+    %FEBioRunStruct.FEBioPath='C:\Program Files\febio-2.5.1\bin\febio2.exe';
     
    [runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
-      
+      %{
     if runFlag==1
         %savepath = sprintf('C:\Users\lavecchc\Desktop\sensitivity');
  %       fullfile(savePath,FEB_struct.run_output_names{1})

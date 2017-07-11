@@ -28,7 +28,7 @@ model = createpde();
 %'Hmax',3,'Jiggle','on'
 geometryFromMesh(model,nodes',facets');
 %generateMesh(model,'GeometricOrder','linear','Hmax',7,'Hmin',0.1);
-msh = generateMesh(model,'GeometricOrder','linear','Hmax',5,'Hmin',1);%it was 7 %'Hmax',7
+msh = generateMesh(model,'GeometricOrder','linear','Hmax',1.5,'Hmin',1.3);%it was 7 %'Hmax',7
 nodes = msh.Nodes;
 elems = msh.Elements;
 pdem = createpde;
@@ -36,7 +36,8 @@ geometryFromMesh(pdem,nodes,elems);
 
 
 %pdeplot3D(model), hold on;
-%pdegplot(model,'FaceLabels','on','FaceAlpha',1), hold on;
+%figure;
+%pdegplot(model,'FaceAlpha',1), hold on;
 
 %pdeplot3D(model), hold on;
 

@@ -10,10 +10,11 @@ evaluate_lam = L_lam2(L_lam2(:,1)>=-0.05 & L_lam2(:,1)<=0.05,: );
 [max_lam, ind] = max(evaluate_lam(:,2));
 
 dist_init = abs(max_lam) - abs(min_body);
+%sc_d
 t_y = sc_d - dist_init; % traslate in order to obtain sc_d
-
+%figure
 %plot3(L_body(:,1),L_body(:,2),L_body(:,3),'.b'),hold on;
-%plot3(L_lam2(:,1),L_lam2(:,2),L_lam2(:,3),'.b'),hold on;
+%plot3(L_lam2(:,1),L_lam2(:,2),L_lam2(:,3),'.b'),grid on;
 
 L_lam2 = [L_lam2(:,1), L_lam2(:,2)-t_y, L_lam2(:,3)];
 L_proc = [L_proc(:,1), L_proc(:,2), L_proc(:,3)];%-t_y
@@ -40,6 +41,6 @@ L_ped = [L_ped_min; L_ped_max];
 mean_y = mean(L_ped_mean(:,2)); %I want the mean of the pedicles to be in corrispondence of the mean of the sc_d
 scd_dist = abs(mean_y)- abs(min_body-sc_d/2);
 L_ped = [L_ped(:,1), L_ped(:,2)-scd_dist, L_ped(:,3)];
-%plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.b'),hold on;
+%plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.g'),hold on;
 
 end

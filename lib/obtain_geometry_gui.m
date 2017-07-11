@@ -26,13 +26,15 @@ cPar.Method='HC';
 model = createpde();
 
 geometryFromMesh(model,Vt',Ft');
-msh = generateMesh(model,'GeometricOrder','linear','Hmax',1.5,'Hmin',1);
+msh = generateMesh(model,'GeometricOrder','linear','Hmax',1.5,'Hmin',1.3);
 nodes = msh.Nodes;
 elems = msh.Elements;
 pdem = createpde;
 geometryFromMesh(pdem,nodes,elems);
 
+%figure
 %generateMesh(model,'GeometricOrder','linear','Hmax',7,'Hmin',1);
+%pdegplot(model,'FaceAlpha',1), hold on;
 
 
 end

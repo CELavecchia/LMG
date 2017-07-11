@@ -12,8 +12,19 @@ VP = 50;
 
 %[ L, mesh_struct_IVD ] = parameterization_gui(VP_anulus,dimensions);
 fprintf('access the models\n\n')
-load('./input/L.mat');
-load('./input/mesh_struct_IVD.mat');
+
+% Set folder and file name
+defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+pathName=fullfile(defaultFolder,'data','input');
+vertName=fullfile(pathName,'L.mat'); 
+ivdName=fullfile(pathName,'mesh_struct_IVD.mat');
+
+outputpathName=fullfile(defaultFolder,'data','output','mat');
+outputName=fullfile(outputpathName,'mesh_struct.mat');
+cloudpathName=fullfile(defaultFolder,'data','output','point_cloud');
+
+load(vertName);
+load(ivdName);
 
 L_body_nt_r = outliers_rem_gui(L.vert_nt.L_body_nt);
 
@@ -58,17 +69,7 @@ for (j = 1:5)
     %plot3(L_ped_rem(:,1),L_ped_rem(:,2),L_ped_rem(:,3),'.r'),hold on;
 end
 
-       %{ 
-name = sprintf('vh_vert%d',1)
-stlStruct.solidNames={name};
-stlStruct.solidVertices={vh_regist};
-stlStruct.solidFaces={vhm(1).solidFaces{1,1}};
-stlStruct.solidNormals={[]};
-fileName=fullfile(sprintf('vh_vert1_regist.stl'));
-
-export_STL_txt(fileName,stlStruct);
-        %}
-        
+      
 
 
 
@@ -106,8 +107,8 @@ export_STL_txt(fileName,stlStruct);
     
 end
 fprintf('saving IVD structure\n\n')
-name = sprintf('./output/mat/mesh_struct.mat');
-save(name,'mesh_struct_IVD2');
+
+save(outputName,'mesh_struct_IVD2');
 
 %fprintf('space arrangements\n');
 % 3D organization % working on FU, I don't use it right by now
@@ -116,6 +117,4 @@ save(name,'mesh_struct_IVD2');
 %------------------     SAVE  
 
 fprintf('saving the vertebrae point clouds\n');
-save_coord_gui( L_no);
-%}
-%check the disc positions
+save_coord_gui( L_no, cloudpathName);

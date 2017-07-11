@@ -25,10 +25,11 @@ model = createpde();
 
 geometryFromMesh(model,Vt',Ft');
 
-generateMesh(model,'GeometricOrder','linear','Hmax',5,'Hmin',1);
+generateMesh(model,'GeometricOrder','linear','Hmax',1.5,'Hmin',1.3);
 %pdeplot3D(model), hold on;
 
-%pdegplot(model,'FaceLabels','on','FaceAlpha',1), hold on;
+%figure;
+%pdegplot(model,'FaceAlpha',1), hold on;
 
 %generateMesh(model,'Hmax',1);
 %pdeplot3D(model), hold on;

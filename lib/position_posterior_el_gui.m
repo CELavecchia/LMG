@@ -104,9 +104,7 @@ inferior_proc_min = L_lam(L_lam(:,3)<z_thres & L_lam(:,1)<cut_min,: );
 L_lam = setdiff(L_lam, inferior_proc_min,'rows'); %remove the part in common
 L_lam = setdiff(L_lam, inferior_proc_max,'rows'); %remove the part in common
 
-%plot3(L_lam(:,1),L_lam(:,2),L_lam(:,3),'.b'), hold on;
 
-%increase a litte on x
 L_lam = [L_lam(:,1)*1.2, L_lam(:,2), L_lam(:,3)];
 %plot3(L_lam(:,1),L_lam(:,2),L_lam(:,3),'.g'), hold on;
 
@@ -129,12 +127,9 @@ init_dist_f = z_max - z_min;
 %inferior_proc_min = [inferior_proc_min(:,1)*sc_TP_wi,inferior_proc_min(:,2),inferior_proc_min(:,3)*scal_z];%to do:evaluate this value from abaqus
 %inferior_proc_max = [inferior_proc_max(:,1)*sc_TP_wi,inferior_proc_max(:,2),inferior_proc_max(:,3)*scal_z];
 
-inferior_proc_min = [inferior_proc_min(:,1)*sc_TP_wi,inferior_proc_min(:,2),inferior_proc_min(:,3)*1.2];%to do:evaluate this value from abaqus
+inferior_proc_min = [inferior_proc_min(:,1)*sc_TP_wi,inferior_proc_min(:,2),inferior_proc_min(:,3)*1.2];
 inferior_proc_max = [inferior_proc_max(:,1)*sc_TP_wi,inferior_proc_max(:,2),inferior_proc_max(:,3)*1.2];
 
-
-%plot3(inferior_proc_min(:,1),inferior_proc_min(:,2),inferior_proc_min(:,3),'*r'),hold on;
-%plot3(inferior_proc_max(:,1),inferior_proc_max(:,2),inferior_proc_max(:,3),'*r'),hold on;
 
 % move back where it has to be
 min_pos = max(inferior_proc_min(:,1));
@@ -233,9 +228,9 @@ min_y = min(L_ped(:,2)) ;
 max_y = max(L_ped(:,2));
 
 initial_leng = (max_y) - (min_y);
-PD_l = sc_d; % I haven't measured it, but it can work to fill the space. It will be cut later in remove points
+PD_l = sc_d; 
 sc_PD_l = PD_l/initial_leng; %scaling factor for the width
-%}
+
 %scaling y
 
 L_ped_min2 = [L_ped_min2(:,1),L_ped_min2(:,2)*sc_PD_l, L_ped_min2(:,3)];
@@ -326,16 +321,7 @@ L_proc = [proc_min; proc_max];
 
 [L_body, L_ped, L_proc, L_lam2] = double_check_positions_el_gui(L_body, L_ped, L_proc, L_lam2, sc_d, sc_w, PD_w, PD_h);
 
-%{
 
-figure
-plot3(L_proc(:,1),L_proc(:,2),L_proc(:,3),'.'),hold on;
-plot3(L_body(:,1),L_body(:,2),L_body(:,3),'.'),hold on;
-plot3(L_lam2(:,1),L_lam2(:,2),L_lam2(:,3),'.'),hold on;
-plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.'),hold on;
-
-
-%}
 
 
 

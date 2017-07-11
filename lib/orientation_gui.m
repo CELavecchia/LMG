@@ -7,19 +7,24 @@ I need:
 
 %}
 
-function Lmes = orientation_gui( Lmes,nbodies )
+function  [CM, CM_IVD,mesh_struct_IVD2,Lmes]  = orientation_gui( Lmes, mesh_struct_IVD2, nbodies, alpha, IVD, heighV )
 %name = sprintf('./Lmes_v2.mat');
 %load(name);
 
+    
+    %plot3(Lmes(1).VT(:,1),Lmes(1).VT(:,2),Lmes(1).VT(:,3),'.b'),hold on;
+    %plot3(Lmes(2).VT(:,1),Lmes(2).VT(:,2),Lmes(2).VT(:,3),'.b'),hold on;
+    %plot3(Lmes(3).VT(:,1),Lmes(3).VT(:,2),Lmes(3).VT(:,3),'.g'),hold on;
+   % plot3(mesh_struct_IVD2(1).V(:,1),mesh_struct_IVD2(1).V(:,2),mesh_struct_IVD2(1).V(:,3),'.b'),hold on
 
 
 
 
-alpha_lum = 43.49;
+alpha_lum = alpha;
 alpha_lum_r = pi*alpha_lum/180; %angle in radians
 hl=0; %   total length
-
-    for(j =1:nbodies)
+%for the vertebrae
+    for(j =1:5)
         %plot3( Lmes(j).VT(:,1),Lmes(j).VT(:,2),Lmes(j).VT(:,3),'.b'), hold on;
 
 
@@ -47,7 +52,8 @@ hl=0; %   total length
         mean_xy = [ mean(bc(j).V_bod_sup(:,1)) mean(bc(j).V_bod_sup(:,2))];
         %find the mean z
         centre = bc(j).V_bod_sup(find(bc(j).V_bod_sup(:,1)<mean_xy(1)+1.5 & bc(j).V_bod_sup(:,1)>mean_xy(1)-1.5 &...
-            bc(j).V_bod_sup(:,2)<mean_xy(2)+1.5  & bc(j).V_bod_sup(:,2)>mean_xy(2)-1.5),:) ; 
+            bc(j).V_bod_sup(:,2)<mean_xy(2)+1.5  & bc(j).V_bod_sup(:,2)>mean_xy(2)-1.5),:) ;
+        %plot3(centre(1),centre(2),centre(3),'Or'),hold on;
         % centroid of the endplate    
         bc(j).V_cent_sup =[mean_xy mean(centre(:,3))];
 
@@ -63,10 +69,12 @@ hl=0; %   total length
         mean_xy = [ mean(bc(j).V_bod_inf(:,1)) mean(bc(j).V_bod_inf(:,2))];
         %find the mean z
         centre = bc(j).V_bod_inf(find(bc(j).V_bod_inf(:,1)<mean_xy(1)+1.5 & bc(j).V_bod_inf(:,1)>mean_xy(1)-1.5 &...
-        bc(j).V_bod_inf(:,2)<mean_xy(2)+1.5  & bc(j).V_bod_inf(:,2)>mean_xy(2)-1.5),:) ; 
+        bc(j).V_bod_inf(:,2)<mean_xy(2)+1.5  & bc(j).V_bod_inf(:,2)>mean_xy(2)-1.5),:) ;
         % centroid of the endplate    
         bc(j).V_cent_inf =[mean_xy mean(centre(:,3))];
-
+        
+        z = [ bc(j).V_cent_sup(:,3) bc(j).V_cent_inf(:,3) ] ; %z centre
+        CG(j,:) = [mean_xy, mean(z)];
         %plot3( bc(j).V_bod_inf(:,1),bc(j).V_bod_inf(:,2),bc(j).V_bod_inf(:,3),'.r'), hold on;
         %plot3( bc(j).V_bod_sup(:,1),bc(j).V_bod_sup(:,2),bc(j).V_bod_sup(:,3),'.r'),hold on;
         %plot3(bc(j).V_cent_inf(:,1),bc(j).V_cent_inf(:,2),bc(j).V_cent_inf(:,3),'Ob'),hold on;
@@ -78,6 +86,51 @@ hl=0; %   total length
 
     end
 
+    
+    %for the IVD (mesh_struct_IVD2)
+    for(j =1:4)
+        
+        % 1 top 2 bottom
+       % boundary facets meshStruct_IVD2.Fb=Fb;
+        
+       %--- superior surface
+        logicFace=mesh_struct_IVD2(j).faceBoundaryMarker==2; % select only the face outside
+        I(j).vert_sup= mesh_struct_IVD2(j).Fb(logicFace,:);
+        
+        bcIVD(j).vert_sup=unique(I(j).vert_sup(:));
+        % find nodes associated to the faces
+        bcIVD(j).V_sup =mesh_struct_IVD2(j).V(bcIVD(j).vert_sup,:); 
+       % plot3(mesh_struct_IVD2(j).V(:,1),mesh_struct_IVD2(j).V(:,2),mesh_struct_IVD2(j).V(:,3),'.r'),hold on;
+        %plot3(bcIVD(j).V_sup(:,1),bcIVD(j).V_sup(:,2),bcIVD(j).V_sup(:,3),'Oy'),hold on;
+        
+        %--- inferior surface
+        logicFace2=mesh_struct_IVD2(j).faceBoundaryMarker==1; % select only the face outside
+        I(j).vert_inf= mesh_struct_IVD2(j).Fb(logicFace2,:);
+        bcIVD(j).vert_inf =unique(I(j).vert_inf(:));
+        % find nodes associated to the faces
+        bcIVD(j).V_inf =mesh_struct_IVD2(j).V(bcIVD(j).vert_inf,:);
+        
+        %plot3(mesh_struct_IVD2(j).V(:,1),mesh_struct_IVD2(j).V(:,2),mesh_struct_IVD2(j).V(:,3),'.g'),hold on;
+       % plot3(bcIVD(j).V_inf(:,1),bcIVD(j).V_inf(:,2),bcIVD(j).V_inf(:,3),'Og'),hold on;
+        
+        
+              
+        % centre sup surface
+        centreIVD_sup = mean(bcIVD(j).V_sup);
+        bcIVD(j).V_centre_sup = centreIVD_sup;
+        %plot3(centreIVD_sup(1),centreIVD_sup(2),centreIVD_sup(3),'Ob'),hold on;
+
+        % centre inf surface
+        centreIVD_inf = mean(bcIVD(j).V_inf);
+         bcIVD(j).V_centre_inf = centreIVD_inf;
+        %plot3(centreIVD_inf(1),centreIVD_inf(2),centreIVD_inf(3),'Or'),hold on;
+          
+        % centre Disc
+        CG_IVD(j,:) = mean(mesh_struct_IVD2(j).V);
+        %plot3( CG_IVD(:,1),CG_IVD(:,2),CG_IVD(:,3),'Or'), hold on;
+        
+    end
+    
 c = hl;% + sum(IVD); %(mm)
 %radius corresponding circumference
 r = c /( 2*sin(alpha_lum_r) );
@@ -90,7 +143,6 @@ zunit = r * sin(th) + z_cent;
 x = zeros(length(zunit)); 
 %figure;
 %plot3(x,yunit, zunit, '-.g'),hold on;
-
 
 
 %-------  traslate
@@ -109,44 +161,37 @@ count_ivd = 1;
 z_rec = 0; y_rec = 0;
 CM_curve_y = []; CM_curve_z = [];
 ii = 0;
-    for(body = 1:nbodies)
+    for(body = 1:9)
         %body;
 
-      %  if(mod(body,2) ~= 0) 
+       if(mod(body,2) ~= 0) 
             % vertebrae
                     %moving only on y and z
-            %ii = ii+1;
-             t = [ bc(body).V_cent_sup(2)-y_up, bc(body).V_cent_sup(3)-z_up ];
+                 
+    %plot3(Lmes(count_v).VT(:,1),Lmes(count_v).VT(:,2),Lmes(count_v).VT(:,3),'.g'),hold on;
+             t = [ bc(count_v).V_cent_sup(2)-y_up, bc(count_v).V_cent_sup(3)-z_up ];
 
     % move the dataset
             %traslation
 
-            Lmes(body).VT = [ Lmes(body).VT(:,1), Lmes(body).VT(:,2)-t(1), Lmes(body).VT(:,3)-abs(t(2)) ];
+            Lmes(count_v).VT = [ Lmes(count_v).VT(:,1), Lmes(count_v).VT(:,2)-t(1), Lmes(count_v).VT(:,3)-abs(t(2)) ];
 
 
             % update the CM vector
-            bc(body).V_cent_supf(:) = [ bc(body).V_cent_sup(1), bc(body).V_cent_sup(2)-abs(t(1)), bc(body).V_cent_sup(3)-abs(t(2)) ];
-
+            bc(count_v).V_cent_sup(:) = [ bc(count_v).V_cent_sup(1), bc(count_v).V_cent_sup(2)-(t(1)), bc(count_v).V_cent_sup(3)-abs(t(2)) ];
+            bc(count_v).V_cent_inf(:) = [ bc(count_v).V_cent_inf(1), bc(count_v).V_cent_inf(2)-(t(1)), bc(count_v).V_cent_inf(3)-abs(t(2)) ];
+            CG(count_v,:) = [CG(count_v,1),CG(count_v,2)-t(1),CG(count_v,3)-abs(t(2))];
 
             % evaluate the vector between the points on the upper and bottom surfaces
-
             %v1 vector (I m working on y and z) defined between the vertebrae
-            v1 = [  bc(body).V_cent_inf(2)- bc(body).V_cent_sup(2),  bc(body).V_cent_inf(3)- bc(body).V_cent_sup(3)];
+            v1 = [  bc(count_v).V_cent_inf(2)- bc(count_v).V_cent_sup(2),  bc(count_v).V_cent_inf(3)- bc(count_v).V_cent_sup(3)];
             %find the corrispondent point on the circumference
 
 
-            d = sqrt( (bc(body).V_cent_sup(2)-bc(body).V_cent_sup(2))^2+ (bc(body).V_cent_supf(3)-bc(body).V_cent_sup(3))^2 ); %corda
-           %{
-            alp_test = asin( ( d+eps )/(2*abs(r)))*2+alp;
-            y_rec2 = r * cos(alp_test) ;
-            z_rec2 = r * sin(alp_test) ;
-            plot3(0,y_rec2, z_rec2, 'Og'),hold on; % ending of the body
-          %}
-
+            d = sqrt( (bc(count_v).V_cent_sup(2)-bc(count_v).V_cent_inf(2))^2+ (bc(count_v).V_cent_sup(3)-bc(count_v).V_cent_inf(3))^2 ); %corda
+          
             alp = asin(d/(2*abs(r)))*2+alp;
-
             %plot(y_up, z_up,'*m');
-
             y_rec = r * cos(alp) + y_cent; % +y_rec;
             z_rec = r * sin(alp) + z_cent;% +z_rec;
             %plot(y_rec, z_rec, '^B'),hold on;
@@ -157,23 +202,44 @@ ii = 0;
 
             %find the angle in between them and rotate the body of that amount
             dot_prod = dot(v1,v2);
-            angle = acos(dot_prod/(norm(v1)*norm(v2)));
+            angle = -acos(dot_prod/(norm(v1)*norm(v2)));
             mat = [cos(angle),-sin(angle);sin(angle),cos(angle)];
             %////////////////////////// ok
-           CM = [bc(body).V_cent_inf, bc(body).V_cent_sup];
+           CM(count_v,1:6) = [bc(count_v).V_cent_inf, bc(count_v).V_cent_sup];
+            CM(count_v,7:9) = CG(count_v,:);
 
-            [ Lmes(body).VT , CM] = ...
-                moving_rot_post_mesh_gui(Lmes(body).VT, CM, count_colv, count_v, t, mat);
-
-            plot3(Lmes(body).VT(:,1),Lmes(body).VT(:,2),Lmes(body).VT(:,3),'.r'),hold on;
-
-            %plot(CM(1,5), CM(1,6), 'Oy');
-            %inf = [ CM(1), CM(count_v,2), CM(count_v,3) ];
-           % plot3(inf(1),inf(2),inf(3),'Om');
+           %size(CM)
+            [ Lmes(count_v).VT , CM(count_v,:)] = ...
+                moving_rot_post_mesh_gui(Lmes(count_v).VT, CM(count_v,:), t, mat);
+           
+            rot_angle(count_v) = angle; 
+            
             count_v = count_v+1 ;
-            count_colv = count_colv+3 ;
-
+       
+       else
+            
+      
+            %////////////////////////// ok
+           CM_IVD(count_ivd,1:6) = [bcIVD(count_ivd).V_centre_inf, bcIVD(count_ivd).V_centre_sup];
+           CM_IVD(count_ivd,7:9) = CG_IVD(count_ivd,:);
+           
+            %plot3(CM_IVD(count_ivd,1),CM_IVD(count_ivd,2),CM_IVD(count_ivd,3),'Og'),hold on;
+            %plot3(mesh_struct_IVD2(count_ivd).V(:,1),mesh_struct_IVD2(count_ivd).V(:,2),mesh_struct_IVD2(count_ivd).V(:,3),'.m' ),hold on;
+            [ mesh_struct_IVD2(count_ivd).V , CM_IVD(count_ivd,:)] = ...
+                moving_rot_post_mesh_gui(mesh_struct_IVD2(count_ivd).V, CM_IVD(count_ivd,:), t, mat);
+            % plot3(CM_IVD(count_ivd,1),CM_IVD(count_ivd,2),CM_IVD(count_ivd,3),'Og'),hold on;
+            %plot3(mesh_struct_IVD2(count_ivd).V(:,1),mesh_struct_IVD2(count_ivd).V(:,2),mesh_struct_IVD2(count_ivd).V(:,3),'.m' ),hold on;
+        
+            
+            count_ivd = count_ivd +1;
+           
+       end
+       
     end
-    
-    position_curve_gui
+      
+
+
+ [CM, CM_IVD,mesh_struct_IVD2,Lmes] = position_curve_gui2(Lmes, mesh_struct_IVD2, CM, CM_IVD, alpha, hl,rot_angle, IVD, heighV);  
+  
+   
 end

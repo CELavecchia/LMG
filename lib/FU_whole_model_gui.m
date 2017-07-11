@@ -14,36 +14,41 @@ markerSize1=50;
 
 % path names
 filePath=mfilename('fullpath');
-savePath=fullfile(fileparts(filePath));
+
+%path to get the datasets
+defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+inputpathName=fullfile(defaultFolder,'data','output','point_cloud'); 
+
+%path to save the dataset
+outputpathName=fullfile(defaultFolder,'data','output','mat'); 
+outputName=fullfile(outputpathName,'Lmes_v2.mat');
 
 %%
 %==============================================================
-fprintf('import vertebrae point clouds to mesh ');
-%load('./vert_struct.mat');
+fprintf('import vertebrae point clouds to mesh \n');
+
 %-----------------      import point clouds          ----------------------
-for(j = 1:nbodies)
+for(j = 1:5)
     
-    sprintf('working on the vertenbra L%d',j)
-    name_body = sprintf('./output/point_cloud/L_body_%d.txt',j);
+    disp(sprintf('working on the vertenbra L%d \n',j))
+    
+    name_body=fullfile(inputpathName,sprintf('L_body_%d.txt',j));
+    %name_body = sprintf('./output/point_cloud/L_body_%d.txt',j);
     L_body = load(name_body);
-    name_lam = sprintf('./output/point_cloud/L_lam_%d.txt',j);
+    
+    name_lam = fullfile(inputpathName,sprintf('L_lam_%d.txt',j));%sprintf('./output/point_cloud/L_lam_%d.txt',j);
     L_lam = load(name_lam);
-    name_ped = sprintf('./output/point_cloud/L_ped_%d.txt',j);
+    
+    name_ped = fullfile(inputpathName,sprintf('L_ped_%d.txt',j));%sprintf('./output/point_cloud/L_ped_%d.txt',j);
     L_ped = load(name_ped);
-    name_proc = sprintf('./output/point_cloud/L_proc_grid_%d.txt',j);
+    
+    name_proc = fullfile(inputpathName,sprintf('L_proc_grid_%d.txt',j));%sprintf('./output/point_cloud/L_proc_grid_%d.txt',j);
     L_proc = load(name_proc);
 
 %----------------------------------------------------------------------
 %divide in two different dataasedts, left (sx) and rights(dx) ones
 [L_proc_dx,L_proc_sx, L_ped_dx, L_ped_sx] = divide_dx_sx_mesh(L_proc, L_ped);
-%{
-figure(j)
-plot3(L_body(:,1),L_body(:,2),L_body(:,3),'.r'),hold on;
-plot3(L_lam(:,1),L_lam(:,2),L_lam(:,3),'.r'),hold on;
-plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.b'),hold on;
-plot3(L_proc(:,1),L_proc(:,2),L_proc(:,3),'.r'),hold on;
 
-%}
 %------ remove the overlappingpoints 
 
 %vertebral body
@@ -51,7 +56,9 @@ fprintf('------------- meshing the v body  ------------\n');
 [body, Eb,Vb] = obtain_geometry_gui( L_body);
 Eb = body.Mesh.Elements';
 Vb = body.Mesh.Nodes';
-%[Fb,Cb] = element2patch(Eb,'tet4');
+[Fb,Cb] = element2patch(Eb,'tet4');
+%figure
+%patch('Faces',Fb,'Vertices',Vb,'faceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.1);%'faceColor','b');
 
 fprintf('------------- meshing the pedicles and processes  ------------\n');
 
@@ -59,22 +66,45 @@ fprintf('------------- meshing the pedicles and processes  ------------\n');
 [ proc_ped_dx,Epp_dx,Vpp_dx] = obtain_geometry2_gui( L_proc_dx(:,1:3));
 Epp_dx = proc_ped_dx.Mesh.Elements';
 Vpp_dx = proc_ped_dx.Mesh.Nodes';
+[Fpp_dx,Cpp_dx] = element2patch(Epp_dx,'tet4');
+%figure
+%patch('Faces',Fpp_dx,'Vertices',Vpp_dx,'faceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.1);%'faceColor','b');
+
+
 [ proc_ped_sx, Epp_sx,Vpp_sx] = obtain_geometry2_gui( L_proc_sx(:,1:3));
 Epp_sx = proc_ped_sx.Mesh.Elements';
 Vpp_sx = proc_ped_sx.Mesh.Nodes';
+[Fpp_sx,Cpp_sx] = element2patch(Epp_sx,'tet4');
+%figure
+%patch('Faces',Fpp_sx,'Vertices',Vpp_sx,'faceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.1);%'faceColor','b');
+
 
 %pedicles
 [ ped_dx,Epe_dx,Vpe_dx] = obtain_geometry3_gui(  L_ped_dx(:,1:3));
 Epe_dx = ped_dx.Mesh.Elements';
 Vpe_dx = ped_dx.Mesh.Nodes';
+[Fpe_dx,Cpe_dx] = element2patch(Epe_dx,'tet4');
+%figure
+%patch('Faces',Fpe_dx,'Vertices',Vpe_dx,'faceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.1);%'faceColor','b');
+
+
 [ ped_sx, Epe_sx,Vpe_sx] = obtain_geometry3_gui(  L_ped_sx(:,1:3));
 Epe_sx = ped_sx.Mesh.Elements';
 Vpe_sx = ped_sx.Mesh.Nodes';   
+[Fpe_sx,Cpe_sx] = element2patch(Epe_sx,'tet4');
+%figure
+%patch('Faces',Fpe_sx,'Vertices',Vpe_sx,'faceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.1);%'faceColor','b');
+
 %lamina
+
 fprintf('------------- meshing the lamina  ------------\n');
+%figure
 [lam, El,Vl] = obtain_geometry_lam_gui(L_lam);
 El = lam.Mesh.Elements';
 Vl = lam.Mesh.Nodes';
+[Fl,Cl] = element2patch(El,'tet4');
+%patch('Faces',Fl,'Vertices',Vl,'faceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.1);%'faceColor','b');
+
 
 
 %close all;
@@ -92,6 +122,9 @@ E = [ Eb; Epp_dx; Epp_sx;Epe_dx; Epe_sx; El];
 shp = alphaShape(V(:,1),V(:,2),V(:,3),4);
 %plot(shp)
 [facets,nodes] = boundaryFacets(shp);
+%figure
+%patch('Faces',facets,'Vertices',nodes,'FaceColor','b','lineWidth',0.2,'lineWidth',0.2,'edgeColor','k');
+
 % ----------- improving the surfaces
 %find 3points connected
 [N] = numConnect(facets,nodes);
@@ -138,30 +171,29 @@ cPar.Method='HC';
 V_mix=[Vt;V_inn]; %Joining nodes
 F_mix=[Ft;F_inn+size(Vt,1)]; %Joining faces
 faceBoundaryMarker=[faceBoundMarker1*ones(size(Ft,1),1); faceBoundMarker2*ones(size(F_inn,1),1)]; %Create boundary markers for faces
-%{
-%plotting surface models
-hf=figuremax(figColor,figColorDef);
-title('Surface models','FontSize',fontSize);
-xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize);
-hold on;
+if(j==1) %plot only the first
+    %plotting surface models
+    hf=cFigure;
+    title('Surface model','FontSize',fontSize);
+    xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize);
+    patch('Faces',Ft,'Vertices',Vt,'FaceColor','r','FaceAlpha',faceAlpha1,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    colormap(autumn(2));
+    camlight headlight;
+    set(gca,'FontSize',fontSize);
+   axis tight;  axis equal;  %grid on;
+end
 
-patch('Faces',F_mix,'Vertices',V_mix,'FaceColor','flat','CData',faceBoundaryMarker,'FaceAlpha',faceAlpha1,'lineWidth',edgeWidth,'edgeColor',edgeColor);
-colormap(autumn(2));
-colorbar;
-camlight headlight;
-set(gca,'FontSize',fontSize);
-view(3); axis tight;  axis equal;  grid on;
-%}
-
+outputpathstlName=fullfile(defaultFolder,'data','output','stl'); 
 
 %write the stl
 if stl==1
-    name = sprintf('vert%d',j)
-    stlStruct.solidNames={name};
+    outputstlName=fullfile(outputpathstlName,sprintf('vert%d.stl',j));
+    %name = sprintf('vert%d',j)
+    stlStruct.solidNames={outputstlName};
     stlStruct.solidVertices={Vt};
     stlStruct.solidFaces={Ft};
     stlStruct.solidNormals={[]};
-    fileName=fullfile(sprintf('./output/stl/vert%d.stl',j));
+    fileName=fullfile(outputstlName);%'./output/stl/vert%d.stl',j));
 
     export_STL_txt(fileName,stlStruct);
 end
@@ -226,15 +258,8 @@ Lmes(j).C = C;
 Lmes(j).E = E; 
 Lmes(j).elementMaterialIndices = elementMaterialIndices;
 %plot3(V(:,1),V(:,2),V(:,3),'.r'),hold on;
-
-
-%{
-name = sprintf('./input_str%d.mat',j);
-fid = fopen(name,'w');
-save(name, 'inputStruct');
-fclose(fid);
-%}
-
+%figure
+%patch('Faces',FT,'Vertices',VT,'FaceColor','b','faceAlpha',1,'edgeColor','k','lineWidth',0.1);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);
 
 %  plot and internal side
 %{
@@ -248,19 +273,7 @@ colormap(autumn);
 camlight headlight;
 set(gca,'FontSize',fontSize);
 
-%}
-%{
-%hf2=figuremax(figColor,figColorDef);
 
-subplot(1,3,2);
-title('Model boundaries','FontSize',fontSize);
-xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
-hps=patch('Faces',Fb,'Vertices',VT,'FaceColor','flat','CData',Cb,'lineWidth',edgeWidth,'edgeColor',edgeColor,'FaceAlpha',faceAlpha1);
-view(3); axis tight;  axis equal;  grid on;
-colormap(autumn);
-set(gca,'FontSize',fontSize);
-drawnow;
-%}
 %hf3=figuremax(figColor,figColorDef);
 
 %subplot(1,3,3);
@@ -281,14 +294,23 @@ drawnow;
 %}
 %}
 
+%}
 end
 
-name = sprintf('./output/mat/Lmes_v2.mat');
+%name = sprintf('./output/mat/Lmes_v2.mat');
 
-fid = fopen(name,'w');
-save(name, 'Lmes');
+fid = fopen(outputName,'w');
+save(outputName, 'Lmes');
 fclose(fid);
 %---------------end vertebrae pre-processing
 
 
+%% 
+%
+% 
+% 
+% _*LMG*_ 
+% <https://celavecchia.github.io/LMG/>
+% 
+% _Carolina Eleonora Lavecchia_, <lavecchia.carolina@gmail.com>
 
