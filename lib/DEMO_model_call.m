@@ -28,7 +28,7 @@ fprintf('-----------------Build the geometrical model--------------------\n');
 %  [dimensions] = parameter_average(model.average.age,model.average.height
 %  ,model.average.sex); % from output gui
 
-[EPWu_half, EPDu,EPWi_half, EPDi, hL, PDH, PDW,TP_wi,Tp_w,SCD,SCW,lam_l, IVD] = parameter_no_input;
+[EPWu_half, EPDu,EPWi_half, EPDi, hL, PDH, PDW,TP_wi,Tp_w,SCD,SCW,lam_l, IVD, PDt, PDs] = parameter_no_input; %add output
 
 dimensions.EPWu_half =EPWu_half ;
 dimensions.EPDu= EPDu; 
@@ -43,12 +43,36 @@ dimensions.sc_d=SCD;
 dimensions.sc_w=SCW;
 dimensions.TP_wu=Tp_w;
 dimensions.TP_wi=TP_wi;
+dimensions.PDt=PDt;
+dimensions.PDs=PDs;
 
 alpha = 43.49;
 
 % fitting and parameterize the model
 mesh_struct_IVD2 = model_elaboration_gui(dimensions);
 
+cFigure;
+%subplot(1,2,1);
+
+ title('Solid tetrahedral meshing IVD','FontSize',fontSize);
+ xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
+ patch('Faces',mesh_struct_IVD2(1).Fb,'Vertices',mesh_struct_IVD2(1).V,'FaceColor','flat','CData',mesh_struct_IVD2(1).faceBoundaryMarker,'lineWidth',0.2,'edgeColor',edgeColor);
+axis tight;  axis equal;  %grid on; 
+camlight headlight;
+%hold on;
+cFigure
+Y=mesh_struct_IVD2(1).V(:,2); YE=mean(Y(mesh_struct_IVD2(1).E),2);
+L=YE<mean(Y);
+[Fs,Cs]=element2patch(mesh_struct_IVD2(1).E(L,:),mesh_struct_IVD2(1).C(L));
+%subplot(1,2,2);
+title('Cut view of the solid tetrahedral mesh model - IVD','FontSize',fontSize);
+xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
+patch('Faces',Fs,'Vertices',mesh_struct_IVD2(1).V,'FaceColor','flat','CData',Cs,'lineWidth',0.2,'edgeColor',edgeColor);
+axis tight;  axis equal;  %grid on;
+%colormap(autumn);
+camlight headlight;
+set(gca,'FontSize',fontSize);
+drawnow;
 %% Mesh vertebrae
 
 fprintf('\n-----------------Solid tetrahedral meshing--------------------\n\n');
@@ -61,22 +85,23 @@ stl = 0;
 fontSize =15;
 
 cFigure;
-subplot(1,2,1);
+%subplot(1,2,1);
 
  title('Solid tetrahedral meshing','FontSize',fontSize);
  xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
  patch('Faces',Lmes(1).FT,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).C,'lineWidth',0.2,'edgeColor',edgeColor);
-axis tight;  axis equal;  grid on; 
+axis tight;  axis equal;  %grid on; 
+camlight headlight;
 hold on;
-
+cFigure
 Y=Lmes(1).VT(:,1); YE=mean(Y(Lmes(1).E),2);
 L=YE<mean(Y);
 [Fs,Cs]=element2patch(Lmes(1).E(L,:),Lmes(1).C(L));
-subplot(1,2,2);
+%subplot(1,2,2);
 title('Cut view of the solid tetrahedral mesh model','FontSize',fontSize);
 xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
 patch('Faces',Fs,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Cs,'lineWidth',0.2,'edgeColor',edgeColor);
-axis tight;  axis equal;  grid on;
+axis tight;  axis equal;  %grid on;
 colormap(autumn);
 camlight headlight;
 set(gca,'FontSize',fontSize);

@@ -2,31 +2,12 @@
 % the CM point
 %clc; clear; close all;
 %function  [vert_t, L_lam_t, L_proc_t, L_ped_t, IVD_data_t] = position_curve(vert, L_lam, L_proc, L_ped, IVD_data, CM, CM_IVD)
-function  [L_no, E_inf_nt, E_sup_nt, ...
-    vert_sc, EP_sup, EP_inf, anulus, nucleus] = position_curve_gui(L_no_r, IVDori, CM, ...
-    CM_IVD, E_inf_nt, E_sup_nt, vert_sc, EP_inf, EP_sup, anulus, nucleus)
+function  [L_no, mesh_struct_IVD2] = position_curve_gui(L_no_r, mesh_struct_IVD2, CM, alpha, hL, IVD)
   
-% I ve to apply the same rotation and traslation to lamina, processes
-   % and pedicles
-%{
-vert = load('./OUTPUT/working_folder/L_body2.txt');
-%function dimension(IVD)
-IVD_data = load( './OUTPUT/IVD_nrot.txt');
-CM = load( './CM.txt');
-CM_IVD = load( './CM_ivd.txt');
-%}
-[ EPWu_half, EPDu, hL, PDH, PDW, IVD ] = parameter;
-%{
-figure(2)
-count =1;
-for(i = 1:5 )
-    plot3(vert(:,count),vert(:,count+1),vert(:,count+2),'.r');
-    count =count+3;
-end
-%}
-%figure(3)
+%CM_IVD = 
+
 %circumference
-alpha_lum = 43.49;
+alpha_lum = alpha;%43.49;
 %to obtain more points
 %alpha_lum = 45;
 alpha_lum_r = pi*alpha_lum/180; %angle in radians
@@ -40,32 +21,22 @@ r = c /( 2*sin(alpha_lum) );
 y_cent = 0;
 z_cent = 0;
 th = 0: alpha_lum_r/100: alpha_lum_r;
-%max(th)
-%{
-yunit = r * cos(th) + y_cent;
-zunit = r * sin(th) + z_cent;
-x = zeros(length(zunit)); 
-plot3(x,yunit, zunit, '-r'),grid on, xlabel('x'), ylabel('y'), zlabel('z');
-hold on;
-%}
-% using this other curve, the parameters are the same, radius, chord and
-% center. I ve changed to this one just because I need more points to
-% evaluate the CM on the curve, since I have added the EP and I didn t take
-% in consideration them in the total length
-th = 0: (pi/3)/100 : pi/3;
-yunit = r * cos(th) + y_cent;
-zunit = r * sin(th) + z_cent;
-x = zeros(length(zunit)); 
-%plot3(x,yunit, zunit, '*b'),grid on, xlabel('x'), ylabel('y'), zlabel('z');
-%hold on;
 
+
+th = 0: (pi/3)/100 : pi/3;
+yunit = -r * cos(th) + y_cent;
+zunit = r * sin(th) + z_cent;
+x = zeros(length(zunit)); 
+plot3(x,yunit, zunit, '*b'),grid on, xlabel('x'), ylabel('y'), zlabel('z');
+%hold on;
+%CM
 % first point -> yunit(1),zunit(1);
 %height vertebrae and IVD, diff sup and inf points only along z
 dist_v = [] ; dist_i = [];
 for(i = 1:5)
    
     dist_v(i) = sqrt( (CM(i,6)-CM(i,3))^2 );
-    dist_i(i) = sqrt( (CM_IVD(i,6)-CM_IVD(i,3))^2 );
+    %dist_i(i) = sqrt( (CM_IVD(i,6)-CM_IVD(i,3))^2 );
     
 end
 
@@ -92,7 +63,7 @@ for(body = 1:9)
         %plot3(zeros(size(y_cm_c)),y_cm_c,z_cm_c, 'Ob'), hold on;
         count_v = count_v +1;
     end
-    
+    %{
     if(mod(body,2) == 0)
         %ivd
         for(i = 1:length(zunit))
@@ -105,6 +76,7 @@ for(body = 1:9)
        % plot3(zeros(size(y_cm_c)),y_cm_c,z_cm_c, 'Or')
        count_i = count_i +1;
     end
+    %}
     % in this way I found the points in corrispondence of the end of each
     % body in the case of perfect contact
     count = count +1; % it s right to put first the counter, since the first place is already taken!
@@ -134,14 +106,8 @@ for(i = 1:(length(y_pos)-1))
  
 end
 count_dis = 1;
-%CM_y(1) = yunit(1); CM_z(1) = zunit(1);
-%y_tmp = CM_y(1) ;
-%z_tmp = CM_z(1) ;
-%{
-for( i = 1 : length(y_pos)-1 )
-    d_points = sqrt( (y_pos(count)-y_pos(i))^2 + (z_pos(count)-z_pos(i))^2 ) ;
-end
-%}
+
+
 for(i = 1:length(y_pos)-1)
    %evaluate the distance between the points previously saved
    for(j = 1 : length(yunit) )  % evaluate the points on the curve, and find the one at the distance
@@ -188,43 +154,14 @@ for(body = 1:9)
     if(mod(body,2) ~= 0) %it s a vertebrae
         t = [CM(count_bodv,8)-CM_y(body), CM(count_bodv,9)-CM_z(body)];
         
-        L_no(count_bodv).body = [ L_no_r(count_bodv).body(:,1), L_no_r(count_bodv).body(:,2)-t(1), L_no_r(count_bodv).body(:,3)-t(2)];
+        L_no(count_bodv).VT = [ L_no_r(count_bodv).VT(:,1), L_no_r(count_bodv).VT(:,2)-t(1), L_no_r(count_bodv).VT(:,3)-t(2)];
                 
-        vert_sc(count_surf).sup_surf =  [ vert_sc(count_surf).sup_surf(:,1),...
-            vert_sc(count_surf).sup_surf(:,2)-t(1), vert_sc(count_surf).sup_surf(:,3)-(t(2))];
-        vert_sc(count_surf).inf_surf =  [ vert_sc(count_surf).inf_surf(:,1),...
-            vert_sc(count_surf).inf_surf(:,2)-t(1), vert_sc(count_surf).inf_surf(:,3)-(t(2))];
-        vert_sc(count_surf).sup_per =  [ vert_sc(count_surf).sup_per(:,1), ...
-            vert_sc(count_surf).sup_per(:,2)-t(1), vert_sc(count_surf).sup_per(:,3)-(t(2))];
-        vert_sc(count_surf).inf_per =  [ vert_sc(count_surf).inf_per(:,1), ...
-            vert_sc(count_surf).inf_per(:,2)-t(1), vert_sc(count_surf).inf_per(:,3)-(t(2))];
-                
-         L_no(count_bodv).lam = [ L_no_r(count_bodv).lam(:,1), L_no_r(count_bodv).lam(:,2)-t(1), L_no_r(count_bodv).lam(:,3)-t(2)];
-        L_no(count_bodv).proc = [  L_no_r(count_bodv).proc(:,1),  L_no_r(count_bodv).proc(:,2)-t(1),  L_no_r(count_bodv).proc(:,3)-t(2)];
-        %L_proc_grid_t(:, count_v:count_v+2) = [ L_proc_grid(:,count_v), L_proc_grid(:,count_v+1)-t(1), L_proc_grid(:,count_v+2)-t(2)];
-        L_no(count_bodv).ped = [ L_no_r(count_bodv).ped(:,1), L_no_r(count_bodv).ped(:,2)-t(1), L_no_r(count_bodv).ped(:,3)-t(2)];
         
-        E_inf_nt(:, count_v:count_v+2) = [ E_inf_nt(:,count_v), E_inf_nt(:,count_v+1)-t(1), E_inf_nt(:,count_v+2)-t(2)];
-        E_sup_nt(:, count_v:count_v+2) = [ E_sup_nt(:,count_v), E_sup_nt(:,count_v+1)-t(1), E_sup_nt(:,count_v+2)-t(2)];
-        
-        EP_inf(count_surf).sup_surf = [ EP_inf(count_surf).sup_surf(:,1), ...
-            EP_inf(count_surf).sup_surf(:,2)-t(1), EP_inf(count_surf).sup_surf(:,3)-(t(2))];
-        EP_inf(count_surf).inf_surf = [ EP_inf(count_surf).inf_surf(:,1), ...
-            EP_inf(count_surf).inf_surf(:,2)-t(1), EP_inf(count_surf).inf_surf(:,3)-(t(2))];
-        EP_inf(count_surf).vol = [ EP_inf(count_surf).vol(:,1), ...
-            EP_inf(count_surf).vol(:,2)-t(1), EP_inf(count_surf).vol(:,3)-(t(2))];
-    
-        EP_sup(count_surf).sup_surf = [ EP_sup(count_surf).sup_surf(:,1), ...
-            EP_sup(count_surf).sup_surf(:,2)-t(1), EP_sup(count_surf).sup_surf(:,3)-(t(2))];
-        EP_sup(count_surf).inf_surf = [ EP_sup(count_surf).inf_surf(:,1),...
-            EP_sup(count_surf).inf_surf(:,2)-t(1), EP_sup(count_surf).inf_surf(:,3)-(t(2))];
-        EP_sup(count_surf).vol = [ EP_sup(count_surf).vol(:,1),...
-            EP_sup(count_surf).vol(:,2)-t(1), EP_sup(count_surf).vol(:,3)-(t(2))];
-     
-        
+                  
         count_v = count_v +3;
         count_bodv = count_bodv + 1 ;
         count_surf = count_surf+1;
+        %{
     elseif (mod(body,2) == 0)
         t = [CM_IVD(count_bodi,8)-CM_y(body), CM_IVD(count_bodi,9)-CM_z(body)];
   
@@ -233,12 +170,12 @@ for(body = 1:9)
             anulus(count_i).vertices(:,2)-t(1), anulus(count_i).vertices(:,3)-t(2)] ;
          nucleus(count_i).vertices =  [ nucleus(count_i).vertices(:,1), ...
             nucleus(count_i).vertices(:,2)-t(1), nucleus(count_i).vertices(:,3)-t(2)] ;
-       % nucleus(count_i).inb_vertices =  [ nucleus(count_i).inb_vertices(:,1), ...
-       %     nucleus(count_i).inb_vertices(:,2)-t(1), nucleus(count_i).inb_vertices(:,3)-t(2)] ;
-        %plot3( nucleus(count_i).vertices(:,1), nucleus(count_i).vertices(:,2), nucleus(count_i).vertices(:,3),'.b'), hold on,xlabel('x'),ylabel('y'),zlabel('z'),grid on;
+      
         count_i = count_i +1;
         count_bodi = count_bodi +1;
+        %}
     end
+
     
 end
 

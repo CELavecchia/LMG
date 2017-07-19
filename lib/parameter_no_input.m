@@ -1,4 +1,4 @@
-function [EPWu_half, EPDu,EPWi_half, EPDi, hL, PDH, PDW,TP_wi,Tp_w,SCD,SCW,lam_l, IVD] = parameter;
+function [EPWu_half, EPDu,EPWi_half, EPDi, hL, PDH, PDW,TP_wi,Tp_w,SCD,SCW,lam_l, IVD, PDt, PDs] = parameter;
 % check the .excel file...
 
 % parameters and correlations from papers
@@ -119,8 +119,18 @@ IVD(5) = 0.926 + 0.008170*age; %_L5_S1
 %}
 
 
+%% pedicle angles
+%trasverse
+PDt_a = 0.042;
+PDt_b = 4.683;
+	
+PDt = PDt_a .* hL + PDt_b;
 
 
-
+%sagittal
+PDs_a = -1.246;
+PDs_b = 46.075;
+PDs = PDs_a .* hL + PDs_b;
+	
 
 

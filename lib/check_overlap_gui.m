@@ -6,6 +6,12 @@ function ped_new =check_overlap( L_body, L_ped_dx )
 
 %remove overlapping points on the pedicles, and on the lamina
 
+%first at all, initial cleaning
+L_bod_sel = L_body(L_body(:,3)>mean(L_body(:,3)),:);
+L_ped_dx = L_ped_dx( L_ped_dx(:,2)<= min(L_bod_sel(:,2))+2,:);
+
+
+
 %check points and check the z values
 eps = 0.3;
 count = 1; count_new = 1 ;
@@ -20,7 +26,7 @@ selection_L_body2 = selection_L_body(r,:);
 ped_new = []; ped_save = [];
 for(j = 1:size(selection_L_body2,1))
      for(k = 1:size(L_ped_dx,1))
-        if( L_ped_dx(k,2)< selection_L_body2(j,2)+eps && L_ped_dx(k,2)>= selection_L_body2(j,2)-eps*2 && ...
+        if( L_ped_dx(k,2)< selection_L_body2(j,2)+eps && L_ped_dx(k,2)>= selection_L_body2(j,2)-eps && ...
             L_ped_dx(k,1)< selection_L_body2(j,1)+eps && L_ped_dx(k,1)>= selection_L_body2(j,1)-eps && ...
             L_ped_dx(k,3)< selection_L_body2(j,3)+eps && L_ped_dx(k,3)>= selection_L_body2(j,3)-eps)
          %clean better
@@ -30,6 +36,9 @@ for(j = 1:size(selection_L_body2,1))
         end 
      end   
 end
+%plot3(L_ped_dx(:,1),L_ped_dx(:,2),L_ped_dx(:,3),'.r'),hold on;
+%plot3(ped_save(:,1),ped_save(:,2),ped_save(:,3),'*g'),hold on;  %check it
+
 ped_extra = L_ped_dx(L_ped_dx(:,2)<mean(ped_save(:,2)),:);
 ped_save = [ ped_save;ped_extra];
 

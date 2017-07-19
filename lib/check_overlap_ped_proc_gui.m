@@ -5,7 +5,7 @@ function ped_new =check_overlap( L_body, L_ped_dx )
 %remove overlapping points on the pedicles, and on the lamina
 
 %check points and check the z values
-eps = 0.3;
+eps = 0.5;
 count = 1; count_new = 1 ;
 [r,c] = find(L_body(:,2)>=min(L_ped_dx(:,2)));
 if(isempty(r)==0)
@@ -31,6 +31,7 @@ end
 ped_extra = L_ped_dx(L_ped_dx(:,2)<mean(ped_save(:,2)),:);
 ped_save = [ ped_save;ped_extra];
 
+%figure
 %plot3(ped_save(:,1),ped_save(:,2),ped_save(:,3),'Oy'),hold on;  %check it
 %plot3(L_ped_dx(:,1),L_ped_dx(:,2),L_ped_dx(:,3),'.r'),hold on;  %check it
 

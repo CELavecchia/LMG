@@ -1,5 +1,5 @@
-function [L_body, L_proc, L_ped, L_lam2] = position_posterior_el(L_body, L_lam, L_proc, L_ped,...
-    EPWu_half, EPDu, hL, lam_l, sc_d, sc_w, PD_w, PD_h, TP_wu, TP_wi,  vh_vert)%F_h,
+function [L_body, L_proc, L_ped, L_lam2] = position_posterior_el(L_body, L_lam, L_proc, ...
+    EPWu_half, EPDu, hL, lam_l, sc_d, sc_w, PD_w, PD_h, TP_wu, TP_wi,  PDt, PDs)%F_h,
 %{
 function [L_body, L_proc, L_ped, L_lam2,vh_vert_regist] = position_posterior_el(L_body, L_lam, L_proc, L_ped,...
     EPWu_half, EPDu, hL, lam_l, sc_d, sc_w, PD_w, PD_h, TP_wu, TP_wi, vh_vert);%F_h,
@@ -183,87 +183,28 @@ L_lam2 = [L_lam; inferior_proc_min; inferior_proc_max];
 % I have to check the positions of the pedicles and adjust them to the
 % sc_w. to do it, evaluate the distance of the mean point of each pedicle,
 % at the level: y = y_min_body + sc_d/2
-%plot3(L_ped(:,1), L_ped(:,2), L_ped(:,3),'.r'),grid on,hold on;
-
 
 mean_body = L_body(L_body(:,1)<0.05 & L_body(:,1)>-0.05,:);
 y_min_body = min(mean_body(:,2));
-%plot(0,y_min_body,'Om'),hold on;
+z_max_body = max(mean_body(:,3));
+
+
 mean_sc = y_min_body - sc_d/2;
-eps = 1;
-%first find the mean value of the pedicles along y and place around mean_sc
-mean_ped = mean(L_ped(:,2));
-%plot(0,mean_ped,'Or'),hold on;
-t_y = abs(mean_ped) - 10;%mean_sc; %to adjust
-L_ped = [ L_ped(:,1), L_ped(:,2)-t_y, L_ped(:,3)];
-%plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.g'),hold on; %ok
 
-%first find the mean value of the pedicles along y and place around mean_sc
-mean_ped = mean(L_ped(:,2));
-[ind,indc] = find( (L_ped(:,2)<=mean_ped+eps) & (L_ped(:,2)>=mean_ped-eps) );
+P_sag = [ -sc_w/2-PD_w/2 mean_sc]; %x,y
+P_trav = [-sc_w/2-PD_w/2 mean_sc z_max_body-1-PD_h/2]; %x y z
 
-L_ped_mean = L_ped(ind,:);
+angl_sagit = -PDs; 
+angl_trasv = 0;%PDt;
 
-%plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.r');
-%take those points, evaluate the x mean and then move accordingly with sc_w
-[ind,indc] = find(L_ped_mean(:,1)<0); L_ped_min = L_ped_mean(ind,:);
-[ind,indc] = find(L_ped_mean(:,1)>0); L_ped_max = L_ped_mean(ind,:);
-
-%entire pedicle
-L_ped_min2 = L_ped(L_ped(:,1)<0,:); 
-L_ped_max2 = L_ped(L_ped(:,1)>0,:);
-
-%scaling the pedicles
-
-%--position sc_w
-x_mean = mean(L_ped_min(:,1));
-%plot3(L_ped(:,1),L_ped(:,2), L_ped(:,3),'.m');
-initial_sc_w = abs(x_mean) - PD_w/2; %x_mean is negative
-t_x = sc_w/2 - initial_sc_w;
-
-%scaling 
-%length
-
-min_y = min(L_ped(:,2)) ;
-max_y = max(L_ped(:,2));
-
-initial_leng = (max_y) - (min_y);
-PD_l = sc_d; 
-sc_PD_l = PD_l/initial_leng; %scaling factor for the width
-
-%scaling y
-
-L_ped_min2 = [L_ped_min2(:,1),L_ped_min2(:,2)*sc_PD_l, L_ped_min2(:,3)];
-L_ped_max2 = [L_ped_max2(:,1),L_ped_max2(:,2)*sc_PD_l, L_ped_max2(:,3)];
-
-%plot3(L_ped_min2(:,1),L_ped_min2(:,2),L_ped_min2(:,3),'.g'),hold on;
-
-mean_y = mean(L_ped_min2(:,2));
-%move the pedicles in corrispondence of the mean_sc
-t_y = abs(y_min_body - sc_d/2) - abs(mean_y) ;
-
-%L_ped = [L_ped_min2(:,1)-t_x, L_ped_min2(:,2)+t_y, L_ped_min2(:,3)-3;...
-%    L_ped_max2(:,1)+t_x, L_ped_max2(:,2)+t_y, L_ped_max2(:,3)-3];
+L_ped = ellipse_gui(P_sag, P_trav , sc_d,sc_w, PD_h, PD_w, angl_sagit, angl_trasv);
 
 
-%L_ped_min2
-L_ped = [L_ped_min2(:,1)-t_x, L_ped_min2(:,2)-t_y, L_ped_min2(:,3);...
-    L_ped_max2(:,1)+t_x, L_ped_max2(:,2)-t_y, L_ped_max2(:,3)];
-%plot3(L_ped(:,1),L_ped(:,2),L_ped(:,3),'.r'),hold on;
+%----------------------------------------
 
-
-%orientation pedicles in the yz plane
-L_ped = orient_pedicles_gui(L_ped); %you can check this angle as well on the scans
-
-
-
-%% ----- PROCESSES
-%{
-plot_matrix(L_proc,'.r');
-plot_matrix(L_body,'.r');
-%plot_matrix(L_lam2,'.r');
-plot_matrix(L_ped,'.r');
 %}
+%% ----- PROCESSES
+
 proc_max = L_proc(find(L_proc(:,1)>=0),:);
 proc_min = L_proc(find(L_proc(:,1)<=0),:);
 %plot3(L_proc(:,1),L_proc(:,2),L_proc(:,3),'.r'),hold on;
@@ -313,13 +254,7 @@ L_proc = [proc_min; proc_max];
 
 
 
-%plot_matrix(L_body,'.r');
-%tuning with the visual human model
-%L_body = tuning_models(L_body,vh_vert);
-
-%plot_matrix(vh_vert,'.y');
-
-[L_body, L_ped, L_proc, L_lam2] = double_check_positions_el_gui(L_body, L_ped, L_proc, L_lam2, sc_d, sc_w, PD_w, PD_h);
+[L_body, L_ped, L_proc, L_lam2] = double_check_positions_el_gui(L_body, L_ped, L_proc, L_lam2, sc_d);
 
 
 

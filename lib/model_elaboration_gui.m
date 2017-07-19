@@ -42,6 +42,8 @@ sc_d=dimensions.sc_d;
 sc_w=dimensions.sc_w;
 TP_wu=dimensions.TP_wu;
 TP_wi=dimensions.TP_wi;
+PDt=dimensions.PDt;
+PDs=dimensions.PDs;
 
 
 %% check overlapping points
@@ -53,9 +55,9 @@ for (j = 1:5)
 
    [ L_body_rem, L_proc_rem, L_ped_rem,L_lam_rem] = ...
     remove_overlap_gui(L_body_nt_r(:,ind:ind+2), L.vert_nt.L_proc_grid_nt(:,ind:ind+2),...
-    L.vert_nt.L_ped_nt(:,ind:ind+2), L.vert_nt.L_lam_nt(:,ind:ind+2), ...
+    L.vert_nt.L_lam_nt(:,ind:ind+2), ...
     EPWu_half(j), EPDu(j), hL(j), lam_l(j), sc_d(j), sc_w(j), PDW(j), PDH(j),...
-    TP_wu(j), TP_wi(j), IVD(j));
+    TP_wu(j), TP_wi(j), PDt(j),PDs(j));
 
     L_no(j).body = L_body_rem;
     L_no(j).proc = L_proc_rem;
@@ -63,13 +65,14 @@ for (j = 1:5)
     L_no(j).lam = L_lam_rem;
 
     ind = ind +3;
-
+    
     %plot3(L_body_rem(:,1),L_body_rem(:,2),L_body_rem(:,3),'.r'),hold on;
-    %plot3(L_proc_rem(:,1),L_proc_rem(:,2),L_proc_rem(:,3),'.r'),hold on;
+    %   plot3(L_proc_rem(:,1),L_proc_rem(:,2),L_proc_rem(:,3),'.r'),hold on;
     %plot3(L_ped_rem(:,1),L_ped_rem(:,2),L_ped_rem(:,3),'.r'),hold on;
+    
 end
 
-      
+     
 
 
 
@@ -109,10 +112,6 @@ end
 fprintf('saving IVD structure\n\n')
 
 save(outputName,'mesh_struct_IVD2');
-
-%fprintf('space arrangements\n');
-% 3D organization % working on FU, I don't use it right by now
-%[L_no, vert_sc, disc] = spacearrangement_new(L_no,L.vertebrae, mesh_struct_IVD2);
 
 %------------------     SAVE  
 
