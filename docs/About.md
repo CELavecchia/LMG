@@ -18,7 +18,14 @@ header-img: "img/home-bg.jpg"
 - [Road Map](#RoadMap)  
 
 ## Project summary <a name="Summary"></a>
-Lumbar Model Generator (LMG) is a MATLAB toolbox for semi-automatic generation of lumbar finite element geometries.
+Lumbar Model Generator (LMG) is a MATLAB toolbox for semi-automatic generation of lumbar finite element geometries. 
+This toolbox allows to obtain:
+- the geometrical model of the lumbar spine (from the vertebrae L1 to the L5 including the intervertebral disc IVD);
+- the surface models of the bodies involved (STL files);
+- the solid meshed model, generated with hexahedral elements for the IVD and tetrahedral elements for the vertebrae;
+
+A work in progress feature is the pre-processing of the solid meshed model to prepare the .feb file to run the finite element simulation in FEBio.
+
 <img src="/img/overview.png" alt="LMG overview" width="100%">
 
 # Installation <a name="Installation"></a>  
