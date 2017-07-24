@@ -1,0 +1,356 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>DEMO_model_call</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-07-24"><meta name="DC.source" content="DEMO_model_call.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plotting settings</a></li><li><a href="#3">Control parameters</a></li><li><a href="#5">Build default average geometrical model</a></li><li><a href="#7">Mesh vertebrae</a></li><li><a href="#8">orientation post mesh</a></li><li><a href="#9">write &amp; run FEBio</a></li></ul></div><pre class="codeinput">clear; close <span class="string">all</span>; clc;
+</pre><h2 id="2">Plotting settings</h2><pre class="codeinput">fontSize=15;
+edgeColor=0.25*ones(1,3);
+edgeWidth=1.5;
+</pre><h2 id="3">Control parameters</h2><pre class="codeinput">nbodies =5;
+
+<span class="comment">% file name</span>
+defaultFolder = fileparts(fileparts(mfilename(<span class="string">'fullpath'</span>)));
+outputpathName=fullfile(defaultFolder,<span class="string">'data'</span>,<span class="string">'output'</span>,<span class="string">'feb'</span>);
+febName=fullfile(outputpathName,<span class="string">'model_febio'</span>);
+</pre><pre class="codeinput"><span class="comment">%function to call the gui and start the model</span>
+fprintf(<span class="string">'--------------------LMG: LUMBAR MODEL GENERATOR------------------\n\n\n'</span>)
+
+<span class="comment">%[model, var] =GUI_test1</span>
+<span class="comment">%{
+</span><span class="comment">get:
+</span><span class="comment">- type of model (a.average, b.subject-specific)
+</span><span class="comment">- num of bodies (you can use the whole spine or only a functional unit.. it
+</span><span class="comment">has to be improved)
+</span><span class="comment">- output (.stl,.feb,.inp)
+</span><span class="comment">- alpha (lumbar curvature angle, if zero then the bodies are arranged in vertical)
+</span><span class="comment">
+</span><span class="comment">%}</span>
+</pre><pre class="codeoutput">--------------------LMG: LUMBAR MODEL GENERATOR------------------
+
+
+</pre><h2 id="5">Build default average geometrical model</h2><p>Provide explanation here</p><pre class="codeinput">fprintf(<span class="string">'-----------------Build the geometrical model--------------------\n'</span>);
+<span class="comment">%  [dimensions] = parameter_average(model.average.age,model.average.height</span>
+<span class="comment">%  ,model.average.sex); % from output gui</span>
+
+[dimensions] = averageModelInput;
+
+alpha = 43.49;
+
+<span class="comment">% fitting and parameterize the model</span>
+mesh_struct_IVD2 = model_elaboration_gui(dimensions);
+</pre><pre class="codeoutput">-----------------Build the geometrical model--------------------
+access the models
+
+parameterization vertebrae
+
+parameterization IVD
+
+saving IVD structure
+
+saving the vertebrae point clouds
+saving the coordinates for the vertebrae L1 
+saving the coordinates for the vertebrae L2 
+saving the coordinates for the vertebrae L3 
+saving the coordinates for the vertebrae L4 
+saving the coordinates for the vertebrae L5 
+</pre><p>Visualizing meshes</p><pre class="codeinput">Y=mesh_struct_IVD2(1).V(:,2); YE=mean(Y(mesh_struct_IVD2(1).E),2);
+L=YE&gt;mean(Y);
+[Fs,Cs]=element2patch(mesh_struct_IVD2(1).E(L,:),mesh_struct_IVD2(1).C(L));
+
+cFigure;
+subplot(1,2,1);
+hold <span class="string">on</span>;
+title(<span class="string">'Solid hexahedral meshing IVD'</span>,<span class="string">'FontSize'</span>,fontSize);
+gpatch(mesh_struct_IVD2(1).Fb,mesh_struct_IVD2(1).V,mesh_struct_IVD2(1).faceBoundaryMarker);
+axisGeom(gca,fontSize);
+camlight <span class="string">headlight</span>;
+colormap(gjet);
+
+subplot(1,2,2);
+hold <span class="string">on</span>;
+title(<span class="string">'Cut view of the solid hexahedral mesh model - IVD'</span>,<span class="string">'FontSize'</span>,fontSize);
+gpatch(Fs,mesh_struct_IVD2(1).V,Cs);
+axisGeom(gca,fontSize);
+camlight <span class="string">headlight</span>;
+colormap(gjet);
+drawnow;
+
+
+fdsdfsa
+</pre><pre class="codeoutput error">Undefined function or variable 'fdsdfsa'.
+
+Error in DEMO_model_call (line 73)
+fdsdfsa
+</pre><h2 id="7">Mesh vertebrae</h2><pre class="codeinput">fprintf(<span class="string">'\n-----------------Solid tetrahedral meshing--------------------\n\n'</span>);
+<span class="comment">%nbodies,stl</span>
+stl = 0;
+[Lmes] = FU_whole_model_gui(5,stl);
+
+
+<span class="comment">% plot</span>
+fontSize =15;
+
+cFigure;
+<span class="comment">%subplot(1,2,1);</span>
+
+title(<span class="string">'Solid tetrahedral meshing'</span>,<span class="string">'FontSize'</span>,fontSize);
+xlabel(<span class="string">'X'</span>,<span class="string">'FontSize'</span>,fontSize); ylabel(<span class="string">'Y'</span>,<span class="string">'FontSize'</span>,fontSize); zlabel(<span class="string">'Z'</span>,<span class="string">'FontSize'</span>,fontSize); hold <span class="string">on</span>;
+patch(<span class="string">'Faces'</span>,Lmes(1).FT,<span class="string">'Vertices'</span>,Lmes(1).VT,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>,<span class="string">'CData'</span>,Lmes(1).C,<span class="string">'lineWidth'</span>,0.2,<span class="string">'edgeColor'</span>,edgeColor);
+axis <span class="string">tight</span>;  axis <span class="string">equal</span>;  <span class="comment">%grid on;</span>
+camlight <span class="string">headlight</span>;
+hold <span class="string">on</span>;
+cFigure
+Y=Lmes(1).VT(:,1); YE=mean(Y(Lmes(1).E),2);
+L=YE&lt;mean(Y);
+[Fs,Cs]=element2patch(Lmes(1).E(L,:),Lmes(1).C(L));
+<span class="comment">%subplot(1,2,2);</span>
+title(<span class="string">'Cut view of the solid tetrahedral mesh model'</span>,<span class="string">'FontSize'</span>,fontSize);
+xlabel(<span class="string">'X'</span>,<span class="string">'FontSize'</span>,fontSize); ylabel(<span class="string">'Y'</span>,<span class="string">'FontSize'</span>,fontSize); zlabel(<span class="string">'Z'</span>,<span class="string">'FontSize'</span>,fontSize); hold <span class="string">on</span>;
+patch(<span class="string">'Faces'</span>,Fs,<span class="string">'Vertices'</span>,Lmes(1).VT,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>,<span class="string">'CData'</span>,Cs,<span class="string">'lineWidth'</span>,0.2,<span class="string">'edgeColor'</span>,edgeColor);
+axis <span class="string">tight</span>;  axis <span class="string">equal</span>;  <span class="comment">%grid on;</span>
+colormap(autumn);
+camlight <span class="string">headlight</span>;
+set(gca,<span class="string">'FontSize'</span>,fontSize);
+drawnow;
+</pre><h2 id="8">orientation post mesh</h2><pre class="codeinput">[CM, CM_IVD,mesh_struct_IVD2,Lmes] = orientation_gui(Lmes,mesh_struct_IVD2,nbodies, alpha, IVD, hL);
+
+<span class="comment">%-----------------------------   plot bodies oriented -------------</span>
+<span class="comment">%figure</span>
+<span class="comment">%patch('Faces',Lmes(5).FT,'Vertices',Lmes(5).VT,'FaceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.5);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);</span>
+
+cFigure;
+title(<span class="string">'3D orientation'</span>,<span class="string">'FontSize'</span>,fontSize);
+<span class="keyword">for</span>(j=1:4)
+    patch(<span class="string">'Faces'</span>,mesh_struct_IVD2(j).FE,<span class="string">'Vertices'</span>,mesh_struct_IVD2(j).V,<span class="string">'FaceColor'</span>,<span class="string">'b'</span>,<span class="string">'faceAlpha'</span>,0.8,<span class="string">'edgeColor'</span>,<span class="string">'k'</span>,<span class="string">'lineWidth'</span>,0.5);<span class="comment">%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);</span>
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+<span class="keyword">for</span>(k=1:5)
+    patch(<span class="string">'Faces'</span>,Lmes(k).FT,<span class="string">'Vertices'</span>,Lmes(k).VT,<span class="string">'FaceColor'</span>,<span class="string">'r'</span>,<span class="string">'faceAlpha'</span>,0.8,<span class="string">'edgeColor'</span>,<span class="string">'k'</span>,<span class="string">'lineWidth'</span>,0.5);<span class="comment">%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);</span>
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+view(3)
+axis <span class="string">tight</span>;  axis <span class="string">equal</span>;  grid <span class="string">on</span>;
+colormap(autumn);
+camlight <span class="string">headlight</span>;
+set(gca,<span class="string">'FontSize'</span>,fontSize);
+drawnow;
+<span class="comment">%--------------------------------------------------------------</span>
+</pre><h2 id="9">write &amp; run FEBio</h2><pre class="codeinput">nbodies = 2;
+fprintf(<span class="string">'----------------- FE pre-processing: FEBio --------------------\n\n'</span>);
+FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes,mesh_struct_IVD2);
+</pre><p><i><b>LMG</b></i> <a href="https://celavecchia.github.io/LMG/">https://celavecchia.github.io/LMG/</a></p><p><i>Carolina Eleonora Lavecchia</i>, <a href="lavecchia.carolina@gmail.com">lavecchia.carolina@gmail.com</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear; close all; clc;
+
+
+%% Plotting settings
+fontSize=15;
+edgeColor=0.25*ones(1,3);
+edgeWidth=1.5;
+
+%% Control parameters
+nbodies =5;
+
+% file name
+defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+outputpathName=fullfile(defaultFolder,'data','output','feb');
+febName=fullfile(outputpathName,'model_febio');
+
+%%
+
+%function to call the gui and start the model
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHLMG: LUMBAR MODEL GENERATORREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n\n')
+
+%[model, var] =GUI_test1
+%{
+get:
+- type of model (a.average, b.subject-specific)
+- num of bodies (you can use the whole spine or only a functional unit.. it
+has to be improved)
+- output (.stl,.feb,.inp)
+- alpha (lumbar curvature angle, if zero then the bodies are arranged in vertical)
+
+%}
+
+%% Build default average geometrical model 
+% Provide explanation here
+
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Build the geometrical modelREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n');
+%  [dimensions] = parameter_average(model.average.age,model.average.height
+%  ,model.average.sex); % from output gui
+
+[dimensions] = averageModelInput;
+
+alpha = 43.49;
+
+% fitting and parameterize the model
+mesh_struct_IVD2 = model_elaboration_gui(dimensions);
+
+%%
+% Visualizing meshes
+
+Y=mesh_struct_IVD2(1).V(:,2); YE=mean(Y(mesh_struct_IVD2(1).E),2);
+L=YE>mean(Y);
+[Fs,Cs]=element2patch(mesh_struct_IVD2(1).E(L,:),mesh_struct_IVD2(1).C(L));
+
+cFigure;
+subplot(1,2,1);
+hold on;
+title('Solid hexahedral meshing IVD','FontSize',fontSize); 
+gpatch(mesh_struct_IVD2(1).Fb,mesh_struct_IVD2(1).V,mesh_struct_IVD2(1).faceBoundaryMarker);
+axisGeom(gca,fontSize); 
+camlight headlight;
+colormap(gjet);
+
+subplot(1,2,2);
+hold on;
+title('Cut view of the solid hexahedral mesh model - IVD','FontSize',fontSize);
+gpatch(Fs,mesh_struct_IVD2(1).V,Cs);
+axisGeom(gca,fontSize); 
+camlight headlight;
+colormap(gjet);
+drawnow;
+
+
+fdsdfsa
+
+%% Mesh vertebrae
+
+fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Solid tetrahedral meshingREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+%nbodies,stl
+stl = 0;
+[Lmes] = FU_whole_model_gui(5,stl);
+
+
+% plot
+fontSize =15;
+
+cFigure;
+%subplot(1,2,1);
+
+title('Solid tetrahedral meshing','FontSize',fontSize);
+xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
+patch('Faces',Lmes(1).FT,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).C,'lineWidth',0.2,'edgeColor',edgeColor);
+axis tight;  axis equal;  %grid on;
+camlight headlight;
+hold on;
+cFigure
+Y=Lmes(1).VT(:,1); YE=mean(Y(Lmes(1).E),2);
+L=YE<mean(Y);
+[Fs,Cs]=element2patch(Lmes(1).E(L,:),Lmes(1).C(L));
+%subplot(1,2,2);
+title('Cut view of the solid tetrahedral mesh model','FontSize',fontSize);
+xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
+patch('Faces',Fs,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Cs,'lineWidth',0.2,'edgeColor',edgeColor);
+axis tight;  axis equal;  %grid on;
+colormap(autumn);
+camlight headlight;
+set(gca,'FontSize',fontSize);
+drawnow;
+
+%% orientation post mesh
+[CM, CM_IVD,mesh_struct_IVD2,Lmes] = orientation_gui(Lmes,mesh_struct_IVD2,nbodies, alpha, IVD, hL);
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-   plot bodies oriented REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%figure
+%patch('Faces',Lmes(5).FT,'Vertices',Lmes(5).VT,'FaceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.5);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+
+cFigure;
+title('3D orientation','FontSize',fontSize);
+for(j=1:4)
+    patch('Faces',mesh_struct_IVD2(j).FE,'Vertices',mesh_struct_IVD2(j).V,'FaceColor','b','faceAlpha',0.8,'edgeColor','k','lineWidth',0.5);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    hold on;
+end
+for(k=1:5)
+    patch('Faces',Lmes(k).FT,'Vertices',Lmes(k).VT,'FaceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.5);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    hold on;
+end
+view(3)
+axis tight;  axis equal;  grid on;
+colormap(autumn);
+camlight headlight;
+set(gca,'FontSize',fontSize);
+drawnow;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+
+%% write & run FEBio
+nbodies = 2;
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- FE pre-processing: FEBio REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes,mesh_struct_IVD2);
+
+
+%%
+%
+%
+%
+% _*LMG*_
+% <https://celavecchia.github.io/LMG/>
+%
+% _Carolina Eleonora Lavecchia_, <lavecchia.carolina@gmail.com>
+##### SOURCE END #####
+--></body></html>

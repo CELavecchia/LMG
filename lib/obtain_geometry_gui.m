@@ -1,7 +1,9 @@
-function [pdem, facets,nodes] = obtain_geometry( L_body)
-w = warning ('off','all');
+function [pdem, facets,nodes] = obtain_geometry_gui( L_body)
+
+warning off
+% w = warning ('off','all');
 rmpath('./output')
-warning(w);
+% warning(w);
 
 shp = alphaShape(L_body(:,1),L_body(:,2),L_body(:,3),16);
 %plot(shp)

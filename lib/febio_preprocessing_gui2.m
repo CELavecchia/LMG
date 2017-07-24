@@ -22,7 +22,7 @@ faceAlpha1=0.5;
 faceAlpha2=0.5;
 edgeColor=0.25*ones(1,3);
 edgeWidth=1.5;
-markerSize1=20; 
+markerSize1=20;
 
 figColor='w'; figColorDef='white';
 fontSize=15;
@@ -31,8 +31,6 @@ faceAlpha2=1;
 edgeColor=0.25*ones(1,3);
 edgeWidth=1.5;
 markerSize=20;
-
-
 
 
 % contact properties
@@ -63,7 +61,7 @@ vcep=0.4;
 
 % Isotropic elastic (Momeni et al)
 Enucl = 2; %MPa
-vnucl = 0.499; 
+vnucl = 0.499;
 
 
 
@@ -104,7 +102,7 @@ phi=90;
 
 
 %% import datasets
- 
+
 %==============================================================
 fprintf('import vertebrae dataset\n\n');
 
@@ -113,7 +111,7 @@ fprintf('import vertebrae dataset\n\n');
 %for(j=1:nbodies)
 %    name = sprintf('./Lmes_v2.mat');
 % load(name);
- %Lmes2(j) = Lmes;
+%Lmes2(j) = Lmes;
 %end
 %name =sprintf('C:/Users/lavecchc/Dropbox/Internship_Melbourne/model_November/SENS_ANALYSIS/L1L5_VP%d.mat',vp(j)); %IVD
 %load(name);
@@ -165,7 +163,7 @@ F4 = mesh_struct_IVD2(4).FE;
 
 if nbodies ==2              % FU L1 - IVD1 - L2
     
-        %--------------- only to avoid the initial penetration-----------
+    %--------------- only to avoid the initial penetration-----------
     Lmes(2).VT(:,3) = Lmes(2).VT(:,3)-5;
     VT(:,3) = VT(:,3) -2.5;
     
@@ -185,8 +183,8 @@ if nbodies ==2              % FU L1 - IVD1 - L2
     patch('Faces',Lmes(2).Fb,'Vertices',Lmes(2).VT,'FaceColor','flat','CData',Lmes(2).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',F1,'Vertices',VT,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     axis tight;  axis equal;  grid on;hold on;
- 
-      %-------------------------------------------------------  
+    
+    %-------------------------------------------------------
     
     V = [Lmes(1).VT; Lmes(2).VT; VT];
     E1 = Lmes(1).E;
@@ -196,15 +194,15 @@ if nbodies ==2              % FU L1 - IVD1 - L2
     febMatL1= Lmes(1).elementMaterialIndices;
     febMatL1(Lmes(1).elementMaterialIndices==-2)=1;
     febMatL1(Lmes(1).elementMaterialIndices==-3)=2;
-
+    
     febMatL2= Lmes(2).elementMaterialIndices;
     febMatL2(Lmes(2).elementMaterialIndices==-2)=1;
     febMatL2(Lmes(2).elementMaterialIndices==-3)=2;
     
-    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1);%+ size(Lmes(4).VT,1)+ size(Lmes(5).VT,1); 
+    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1);%+ size(Lmes(4).VT,1)+ size(Lmes(5).VT,1);
     E_ivd1 = [E_ivd1(:,5:8) E_ivd1(:,1:4)]; %it was inverted for febio
-     
-
+    
+    
 elseif nbodies ==3          %  L1 - IVD1 - L2 - IVD2 - L3
     V = [Lmes(1).VT; Lmes(2).VT; Lmes(3).VT; VT; VT2];
     E1 = Lmes(1).E;
@@ -217,21 +215,21 @@ elseif nbodies ==3          %  L1 - IVD1 - L2 - IVD2 - L3
     febMatL1= Lmes(1).elementMaterialIndices;
     febMatL1(Lmes(1).elementMaterialIndices==-2)=1;
     febMatL1(Lmes(1).elementMaterialIndices==-3)=2;
-
+    
     febMatL2= Lmes(2).elementMaterialIndices;
     febMatL2(Lmes(2).elementMaterialIndices==-2)=1;
     febMatL2(Lmes(2).elementMaterialIndices==-3)=2;
-
+    
     febMatL3= Lmes(3).elementMaterialIndices;
     febMatL3(Lmes(3).elementMaterialIndices==-2)=1;
     febMatL3(Lmes(3).elementMaterialIndices==-3)=2;
     
-    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1);%+ size(Lmes(4).VT,1)+ size(Lmes(5).VT,1); 
+    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1);%+ size(Lmes(4).VT,1)+ size(Lmes(5).VT,1);
     E_ivd1 = [E_ivd1(:,5:8) E_ivd1(:,1:4)]; %it was inverted for febio
-    E_ivd2 = E_Ivd2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(VT,1);% size(Lmes(4).V,1)+ size(Lmes(5).V,1) + size(VT,1); 
+    E_ivd2 = E_Ivd2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(VT,1);% size(Lmes(4).V,1)+ size(Lmes(5).V,1) + size(VT,1);
     E_ivd2 = [E_ivd2(:,5:8) E_ivd2(:,1:4)];%it was inverted for febio
-
-  
+    
+    
 elseif nbodies ==4          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4
     V = [Lmes(1).VT; Lmes(2).VT; Lmes(3).VT; Lmes(4).VT; VT; VT2; VT3];
     E1 = Lmes(1).E;
@@ -248,11 +246,11 @@ elseif nbodies ==4          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4
     febMatL1= Lmes(1).elementMaterialIndices;
     febMatL1(Lmes(1).elementMaterialIndices==-2)=1;
     febMatL1(Lmes(1).elementMaterialIndices==-3)=2;
-
+    
     febMatL2= Lmes(2).elementMaterialIndices;
     febMatL2(Lmes(2).elementMaterialIndices==-2)=1;
     febMatL2(Lmes(2).elementMaterialIndices==-3)=2;
-
+    
     febMatL3= Lmes(3).elementMaterialIndices;
     febMatL3(Lmes(3).elementMaterialIndices==-2)=1;
     febMatL3(Lmes(3).elementMaterialIndices==-3)=2;
@@ -261,14 +259,14 @@ elseif nbodies ==4          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4
     febMatL4(Lmes(4).elementMaterialIndices==-2)=1;
     febMatL4(Lmes(4).elementMaterialIndices==-3)=2;
     
-    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1); 
+    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1);
     E_ivd1 = [E_ivd1(:,5:8) E_ivd1(:,1:4)]; %it was inverted for febio
     E_ivd2 = E_Ivd2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1)+ size(VT,1)+ size(VT2,1);
     E_ivd2 = [E_ivd2(:,5:8) E_ivd2(:,1:4)];%it was inverted for febio
     E_ivd3 = E_Ivd3 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1)+ size(VT,1)+ size(VT2,1)+ size(VT3,1);
     E_ivd3 = [E_ivd3(:,5:8) E_ivd3(:,1:4)];%it was inverted for febio
     
-    elseif nbodies ==5          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4 - IVD4 - L5
+elseif nbodies ==5          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4 - IVD4 - L5
     V = [Lmes(1).VT; Lmes(2).VT; Lmes(3).VT; Lmes(4).VT;Lmes(5).VT; VT; VT2; VT3; VT4];
     E1 = Lmes(1).E;
     E2 = Lmes(2).E + size(Lmes(1).VT,1);
@@ -286,16 +284,16 @@ elseif nbodies ==4          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4
         size(Lmes(4).VT,1) + size(VT,1)+ size(VT2,1)+ size(VT3,1);%IVD3
     Fbnew4 = Fbnew4 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ ...
         size(Lmes(4).VT,1) + size(Lmes(5).VT,1) + size(VT,1)+ size(VT2,1)+ size(VT3,1)+ size(VT4,1);%IVD3
-
+    
     
     febMatL1= Lmes(1).elementMaterialIndices;
     febMatL1(Lmes(1).elementMaterialIndices==-2)=1;
     febMatL1(Lmes(1).elementMaterialIndices==-3)=2;
-
+    
     febMatL2= Lmes(2).elementMaterialIndices;
     febMatL2(Lmes(2).elementMaterialIndices==-2)=1;
     febMatL2(Lmes(2).elementMaterialIndices==-3)=2;
-
+    
     febMatL3= Lmes(3).elementMaterialIndices;
     febMatL3(Lmes(3).elementMaterialIndices==-2)=1;
     febMatL3(Lmes(3).elementMaterialIndices==-3)=2;
@@ -308,20 +306,20 @@ elseif nbodies ==4          %  L1 - IVD1 - L2 - IVD2 - L3 - IVD3 - L4
     febMatL5(Lmes(5).elementMaterialIndices==-2)=1;
     febMatL5(Lmes(5).elementMaterialIndices==-3)=2;
     
-    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1); 
+    E_ivd1 = E_Ivd1 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1);
     E_ivd1 = [E_ivd1(:,5:8) E_ivd1(:,1:4)]; %it was inverted for febio
     E_ivd2 = E_Ivd2 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1)+ size(VT,1)+ size(VT2,1);
     E_ivd2 = [E_ivd2(:,5:8) E_ivd2(:,1:4)];%it was inverted for febio
     E_ivd3 = E_Ivd3 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ size(Lmes(4).VT,1)+ size(VT,1)+ size(VT2,1)+ size(VT3,1);
     E_ivd3 = [E_ivd3(:,5:8) E_ivd3(:,1:4)];%it was inverted for febio
     E_ivd4 = E_Ivd4 + size(Lmes(1).VT,1) + size(Lmes(2).VT,1)+ size(Lmes(3).VT,1)+ ...
-         size(Lmes(4).VT,1)+ size(Lmes(5).VT,1)+ size(VT,1)+ size(VT2,1)+ size(VT3,1)+ size(VT4,1);
+        size(Lmes(4).VT,1)+ size(Lmes(5).VT,1)+ size(VT,1)+ size(VT2,1)+ size(VT3,1)+ size(VT4,1);
     E_ivd4 = [E_ivd4(:,5:8) E_ivd4(:,1:4)];%it was inverted for febio
     
-
+    
     
 end
-    
+
 %nodeset for the output
 %{
 x_node_IVD1 =  x_node_IVD1 + size(Lmes(1).VT(:,1),1) +size(Lmes(2).VT(:,1),1)+ size(Lmes(3).VT(:,1),1);
@@ -400,59 +398,59 @@ febMatIVD4(C4==11)=3;%5;
 
 
 model.V = V; %vert
-    model.E1 = E1; model.E2 = E2; 
-    model.E_ivd1 = E_ivd1; 
-    model.Fb1 = Lmes(1).Fb; model.Fb2 = Lmes(2).Fb;
-    model.matind1 =febMatL1; model.matind2 =febMatL2;
-    model.Cb = Lmes(1).Cb; model.Cb2 = Lmes(2).Cb ; 
+model.E1 = E1; model.E2 = E2;
+model.E_ivd1 = E_ivd1;
+model.Fb1 = Lmes(1).Fb; model.Fb2 = Lmes(2).Fb;
+model.matind1 =febMatL1; model.matind2 =febMatL2;
+model.Cb = Lmes(1).Cb; model.Cb2 = Lmes(2).Cb ;
 
-    model.FbI1 = febMatIVD; 
-    model.Fbnew = Fbnew; model.Fbnew2 = Fbnew2; %faces
-    model.bcI1 = mesh_struct_IVD2(1).faceBoundaryMarker; 
-    %model.E_ind_vect_fibres = E_ind_vect_fibres; model.E_ind_fibres = E_ind_fibres; 
+model.FbI1 = febMatIVD;
+model.Fbnew = Fbnew; model.Fbnew2 = Fbnew2; %faces
+model.bcI1 = mesh_struct_IVD2(1).faceBoundaryMarker;
+%model.E_ind_vect_fibres = E_ind_vect_fibres; model.E_ind_fibres = E_ind_fibres;
+
+if nbodies ==3
     
-    if nbodies ==3
-         
-         model.E3 = E3;model.E_ivd2 = E_ivd2; %elements
-         model.matind3 =febMatL3; %mat ind vert
-         model.FbI2 = febMatIVD2;    %mat ind IVD
-         model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
-          model.Fb3 = Lmes(3).Fb; %faces vert
-          model.Cb3 = Lmes(3).Cb; % cb vert
-    elseif nbodies ==4
-        model.E3 = E3;model.E_ivd2 = E_ivd2; %elements
-         model.matind3 =febMatL3; %mat ind vert
-         model.FbI2 = febMatIVD2;    %mat ind IVD
-         model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
-          model.Fb3 = Lmes(3).Fb; %faces vert
-          model.Cb3 = Lmes(3).Cb; % cb vert
-         model.E4 = E4;model.E_ivd3 = E_ivd3; %elements
-         model.matind4 =febMatL4; %mat ind vert
-         model.FbI3 = febMatIVD3;    %mat ind IVD
-         model.bcI3 = mesh_struct_IVD2(3).faceBoundaryMarker; %bc IVD
-          model.Fb4 = Lmes(4).Fb; %faces vert
-          model.Cb4 = Lmes(4).Cb; % cb vert
-    elseif nbodies ==5
-        model.E3 = E3;model.E_ivd2 = E_ivd2; %elements
-         model.matind3 =febMatL3; %mat ind vert
-         model.FbI2 = febMatIVD2;    %mat ind IVD
-         model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
-          model.Fb3 = Lmes(3).Fb; %faces vert
-          model.Cb3 = Lmes(3).Cb; % cb vert
-         model.E5 = E5;model.E_ivd4 = E_ivd4; %elements
-         model.matind5 =febMatL5; %mat ind vert
-         model.FbI4 = febMatIVD4;    %mat ind IVD
-         model.bcI4 = mesh_struct_IVD2(4).faceBoundaryMarker; %bc IVD
-          model.Fb5 = Lmes(5).Fb; %faces vert
-          model.Cb5 = Lmes(5).Cb; % cb vert 
-        
-        
-    end
-    
-    save(struct_name,'model');
+    model.E3 = E3;model.E_ivd2 = E_ivd2; %elements
+    model.matind3 =febMatL3; %mat ind vert
+    model.FbI2 = febMatIVD2;    %mat ind IVD
+    model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
+    model.Fb3 = Lmes(3).Fb; %faces vert
+    model.Cb3 = Lmes(3).Cb; % cb vert
+elseif nbodies ==4
+    model.E3 = E3;model.E_ivd2 = E_ivd2; %elements
+    model.matind3 =febMatL3; %mat ind vert
+    model.FbI2 = febMatIVD2;    %mat ind IVD
+    model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
+    model.Fb3 = Lmes(3).Fb; %faces vert
+    model.Cb3 = Lmes(3).Cb; % cb vert
+    model.E4 = E4;model.E_ivd3 = E_ivd3; %elements
+    model.matind4 =febMatL4; %mat ind vert
+    model.FbI3 = febMatIVD3;    %mat ind IVD
+    model.bcI3 = mesh_struct_IVD2(3).faceBoundaryMarker; %bc IVD
+    model.Fb4 = Lmes(4).Fb; %faces vert
+    model.Cb4 = Lmes(4).Cb; % cb vert
+elseif nbodies ==5
+    model.E3 = E3;model.E_ivd2 = E_ivd2; %elements
+    model.matind3 =febMatL3; %mat ind vert
+    model.FbI2 = febMatIVD2;    %mat ind IVD
+    model.bcI2 = mesh_struct_IVD2(2).faceBoundaryMarker; %bc IVD
+    model.Fb3 = Lmes(3).Fb; %faces vert
+    model.Cb3 = Lmes(3).Cb; % cb vert
+    model.E5 = E5;model.E_ivd4 = E_ivd4; %elements
+    model.matind5 =febMatL5; %mat ind vert
+    model.FbI4 = febMatIVD4;    %mat ind IVD
+    model.bcI4 = mesh_struct_IVD2(4).faceBoundaryMarker; %bc IVD
+    model.Fb5 = Lmes(5).Fb; %faces vert
+    model.Cb5 = Lmes(5).Cb; % cb vert
     
     
-      
+end
+
+save(struct_name,'model');
+
+
+
 
 %%  BC
 %IVD
@@ -460,28 +458,28 @@ logicFace=bC==2;
 FI_sup1=Fbnew(logicFace,:);
 bcIVD(1).sup=unique(FI_sup1(:)); %disc_sup1
 logicFace=bC==1;
-FI_inf1=Fbnew(logicFace,:); 
+FI_inf1=Fbnew(logicFace,:);
 bcIVD(1).inf=unique(FI_inf1(:)); %disc_inf1
 
 logicFace=bC2==2;
 FI_sup2=Fbnew2(logicFace,:);
 bcIVD(2).sup=unique(FI_sup2(:));
 logicFace=bC2==1;
-FI_inf2=Fbnew2(logicFace,:); 
+FI_inf2=Fbnew2(logicFace,:);
 bcIVD(2).inf=unique(FI_inf2(:));
 
 logicFace=bC3==1;
 FI_sup3=Fbnew3(logicFace,:);
 bcIVD(3).sup=unique(FI_sup3(:));
 logicFace=bC3==2;
-FI_inf3=Fbnew3(logicFace,:); 
+FI_inf3=Fbnew3(logicFace,:);
 bcIVD(3).inf=unique(FI_inf2(:));
 
 logicFace=bC4==1;
 FI_sup4=Fbnew4(logicFace,:);
 bcIVD(4).sup=unique(FI_sup4(:));
 logicFace=bC4==2;
-FI_inf4=Fbnew4(logicFace,:); 
+FI_inf4=Fbnew4(logicFace,:);
 bcIVD(4).inf=unique(FI_inf4(:));
 
 
@@ -490,72 +488,72 @@ sz = 0;
 for(j =1:nbodies)
     logicFace=Lmes(j).Cb==2; % select only the face outside
     Face_ext= Lmes(j).Fb(logicFace,:);
-
-    [N]=patchNormal(Face_ext, V); 
+    
+    [N]=patchNormal(Face_ext, V);
     faceBoundaryMarker=zeros(size(Face_ext,1),1);
-
+    
     faceBoundaryMarker(N(:,1)<-0.5)=1; %Left
     faceBoundaryMarker(N(:,1)>0.5)=2; %Right
     faceBoundaryMarker(N(:,2)<-0.5)=3; %Front
     faceBoundaryMarker(N(:,2)>0.5)=4; %Back
     faceBoundaryMarker(N(:,3)<-0.5)=5; %Top
     faceBoundaryMarker(N(:,3)>0.5)=6; %Bottom
-
+    
     logicFace2=faceBoundaryMarker==5;
     F(j).vert_sup= Face_ext(logicFace2,:);
     bc(j).vert_sup=unique(F(j).vert_sup(:));
     logicFace2=faceBoundaryMarker==6;
     F(j).vert_inf=Face_ext(logicFace2,:);
     bc(j).vert_inf=unique(F(j).vert_inf(:));
-
     
-sz = size(Lmes(j).VT,1);
-%hold on;
-%patch('Faces',F_selec2,'Vertices',V,'FaceColor','flat','CData',faceBoundaryMarker,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
-
-%patch('Faces',Lmes(j).Fb,'Vertices',V,'FaceColor','flat','CData',Lmes(j).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
-%hold on;
-%patch('Faces',Face_ext,'Vertices',V,'FaceColor','flat','CData',faceBoundaryMarker,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
-
-%plotV(V(bc(j).vert_sup,:),'b.','MarkerSize',markerSize);hold on;
-%plotV(V(bc(j).vert_inf,:),'r.','MarkerSize',markerSize);hold on;
+    
+    sz = size(Lmes(j).VT,1);
+    %hold on;
+    %patch('Faces',F_selec2,'Vertices',V,'FaceColor','flat','CData',faceBoundaryMarker,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    
+    %patch('Faces',Lmes(j).Fb,'Vertices',V,'FaceColor','flat','CData',Lmes(j).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    %hold on;
+    %patch('Faces',Face_ext,'Vertices',V,'FaceColor','flat','CData',faceBoundaryMarker,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    
+    %plotV(V(bc(j).vert_sup,:),'b.','MarkerSize',markerSize);hold on;
+    %plotV(V(bc(j).vert_inf,:),'r.','MarkerSize',markerSize);hold on;
     
 end
 
 
 
 %% CONSTRUCTING FEB MODEL
-  FEB_struct.febio_spec.version='2.0';
-    FEB_struct.Module.Type='solid';
+FEB_struct.febio_spec.version='2.0';
+FEB_struct.Module.Type='solid';
 
-    % Defining file names
-    FEB_struct.run_filename=[modelName,'.feb']; %FEB file name
-    FEB_struct.run_logname=[modelName,'.log']; %FEBio log file name
+% Defining file names
+FEB_struct.run_filename=[modelName,'.feb']; %FEB file name
+FEB_struct.run_logname=[modelName,'.log']; %FEBio log file name
 
-    %Geometry section
-    FEB_struct.Geometry.Nodes=V;
-    if nbodies ==2
-        FEB_struct.Geometry.Elements={E1 E2 E_ivd1}; %The element sets
-        FEB_struct.Geometry.ElementType={'tet4','tet4','hex8'}; %The element types
-        FEB_struct.Geometry.ElementMat={febMatL1', febMatL2', febMatIVD'};
-        FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'IVD1'};
-
-    elseif nbodies==3
-            FEB_struct.Geometry.Elements={E1 E2 E3 E_ivd1 E_ivd2}; %The element sets
-        FEB_struct.Geometry.ElementType={'tet4','tet4','tet4','hex8','hex8'}; %The element types
-        FEB_struct.Geometry.ElementMat={febMatL1', febMatL2',febMatL3', febMatIVD', febMatIVD2'};
-        FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'L3' 'IVD1' 'IVD2'};
-    elseif nbodies==4
-            FEB_struct.Geometry.Elements={E1 E2 E3 E4 E_ivd1 E_ivd2 E_ivd3}; %The element sets
-        FEB_struct.Geometry.ElementType={'tet4','tet4','tet4','tet4','hex8','hex8','hex8'}; %The element types
-        FEB_struct.Geometry.ElementMat={febMatL1', febMatL2',febMatL3',febMatL4', febMatIVD', febMatIVD2',febMatIVD3'};
-        FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'L3' 'L4' 'IVD1' 'IVD2' 'IVD3'};
-    elseif nbodies==5
-        FEB_struct.Geometry.Elements={E1 E2 E3 E4 E5 E_ivd1 E_ivd2 E_ivd3 E_ivd4}; %The element sets
-        FEB_struct.Geometry.ElementType={'tet4','tet4','tet4','tet4','tet4','hex8','hex8','hex8','hex8'}; %The element types
-        FEB_struct.Geometry.ElementMat={febMatL1', febMatL2',febMatL3',febMatL4',febMatL5', febMatIVD', febMatIVD2',febMatIVD3',febMatIVD4'};
-        FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'L3' 'L4' 'L5' 'IVD1' 'IVD2' 'IVD3' 'IVD4'};
-    end
+%Geometry section
+FEB_struct.Geometry.Nodes=V;
+if nbodies ==2
+    FEB_struct.Geometry.Elements={E1 E2 E_ivd1}; %The element sets
+    FEB_struct.Geometry.ElementType={'tet4','tet4','hex8'}; %The element types
+    FEB_struct.Geometry.ElementMat={febMatL1', febMatL2', febMatIVD'};
+    FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'IVD1'};
+    
+elseif nbodies==3
+    FEB_struct.Geometry.Elements={E1 E2 E3 E_ivd1 E_ivd2}; %The element sets
+    FEB_struct.Geometry.ElementType={'tet4','tet4','tet4','hex8','hex8'}; %The element types
+    FEB_struct.Geometry.ElementMat={febMatL1', febMatL2',febMatL3', febMatIVD', febMatIVD2'};
+    FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'L3' 'IVD1' 'IVD2'};
+elseif nbodies==4
+    FEB_struct.Geometry.Elements={E1 E2 E3 E4 E_ivd1 E_ivd2 E_ivd3}; %The element sets
+    FEB_struct.Geometry.ElementType={'tet4','tet4','tet4','tet4','hex8','hex8','hex8'}; %The element types
+    FEB_struct.Geometry.ElementMat={febMatL1', febMatL2',febMatL3',febMatL4', febMatIVD', febMatIVD2',febMatIVD3'};
+    FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'L3' 'L4' 'IVD1' 'IVD2' 'IVD3'};
+elseif nbodies==5
+    FEB_struct.Geometry.Elements={E1 E2 E3 E4 E5 E_ivd1 E_ivd2 E_ivd3 E_ivd4}; %The element sets
+    FEB_struct.Geometry.ElementType={'tet4','tet4','tet4','tet4','tet4','hex8','hex8','hex8','hex8'}; %The element types
+    FEB_struct.Geometry.ElementMat={febMatL1', febMatL2',febMatL3',febMatL4',febMatL5', febMatIVD', febMatIVD2',febMatIVD3',febMatIVD4'};
+    FEB_struct.Geometry.ElementsPartName={'L1' 'L2' 'L3' 'L4' 'L5' 'IVD1' 'IVD2' 'IVD3' 'IVD4'};
+end
 
 %% Material section
 
@@ -571,20 +569,20 @@ FEB_struct.Materials{2}.Values = {Ecanc,vcanc};
 
 
 
- 
- %IVD   ---- only for this test, check in the other script for the material
- %properties for AF, NP and CEP
- %isotropic linear
- FEB_struct.Materials{3}.Type = 'isotropic elastic';
+
+%IVD   ---- only for this test, check in the other script for the material
+%properties for AF, NP and CEP
+%isotropic linear
+FEB_struct.Materials{3}.Type = 'isotropic elastic';
 FEB_struct.Materials{3}.Name = 'nucleus'; %np1
 FEB_struct.Materials{3}.Properties = {'E','v'};
 FEB_struct.Materials{3}.Values = {Eanul,vanul};
- 
- 
- 
- %CEP
- %check this one... the elements have been selected 
- %{
+
+
+
+%CEP
+%check this one... the elements have been selected
+%{
 FEB_struct.Materials{6}.Type = 'isotropic elastic';
 FEB_struct.Materials{6}.Name = 'bone';
 FEB_struct.Materials{6}.Properties = {'E','v'};
@@ -599,22 +597,22 @@ FEB_struct.Materials{6}.Values = {Ecep,vcep};
 %Defining node sets
 
 
-    %IVD1
-    FEB_struct.Geometry.NodeSet{1}.Set = bcIVD(1).sup; 
-    FEB_struct.Geometry.NodeSet{1}.Name = 'disc_sup1';
-    FEB_struct.Geometry.NodeSet{2}.Set = bcIVD(1).inf; 
-    FEB_struct.Geometry.NodeSet{2}.Name = 'disc_inf1';
-     
+%IVD1
+FEB_struct.Geometry.NodeSet{1}.Set = bcIVD(1).sup;
+FEB_struct.Geometry.NodeSet{1}.Name = 'disc_sup1';
+FEB_struct.Geometry.NodeSet{2}.Set = bcIVD(1).inf;
+FEB_struct.Geometry.NodeSet{2}.Name = 'disc_inf1';
+
 if nbodies==2
     %L1
-    FEB_struct.Geometry.NodeSet{3}.Set = bc(1).vert_sup; 
+    FEB_struct.Geometry.NodeSet{3}.Set = bc(1).vert_sup;
     FEB_struct.Geometry.NodeSet{3}.Name = 'vert_L1_sup';
-    FEB_struct.Geometry.NodeSet{4}.Set = bc(1).vert_inf; 
+    FEB_struct.Geometry.NodeSet{4}.Set = bc(1).vert_inf;
     FEB_struct.Geometry.NodeSet{4}.Name = 'vert_L1_inf';
     %L2
-    FEB_struct.Geometry.NodeSet{5}.Set = bc(2).vert_sup; 
+    FEB_struct.Geometry.NodeSet{5}.Set = bc(2).vert_sup;
     FEB_struct.Geometry.NodeSet{5}.Name = 'vert_L2_sup';
-    FEB_struct.Geometry.NodeSet{6}.Set = bc(2).vert_inf; 
+    FEB_struct.Geometry.NodeSet{6}.Set = bc(2).vert_inf;
     FEB_struct.Geometry.NodeSet{6}.Name = 'vert_L2_inf';
     
     % BC
@@ -630,28 +628,28 @@ if nbodies==2
     %  colormap(autumn);
     camlight headlight;
     set(gca,'FontSize',fontSize);
-
-
+    
+    
 elseif nbodies==3
     %IVD2
-    FEB_struct.Geometry.NodeSet{3}.Set = bcIVD(2).sup; 
+    FEB_struct.Geometry.NodeSet{3}.Set = bcIVD(2).sup;
     FEB_struct.Geometry.NodeSet{3}.Name = 'disc_sup2';
-    FEB_struct.Geometry.NodeSet{4}.Set = bcIVD(2).sup; 
+    FEB_struct.Geometry.NodeSet{4}.Set = bcIVD(2).sup;
     FEB_struct.Geometry.NodeSet{4}.Name = 'disc_inf2';
     %L1
-    FEB_struct.Geometry.NodeSet{5}.Set = bc(1).vert_sup; 
+    FEB_struct.Geometry.NodeSet{5}.Set = bc(1).vert_sup;
     FEB_struct.Geometry.NodeSet{5}.Name = 'vert_L1_sup';
-    FEB_struct.Geometry.NodeSet{6}.Set = bc(1).vert_inf; 
+    FEB_struct.Geometry.NodeSet{6}.Set = bc(1).vert_inf;
     FEB_struct.Geometry.NodeSet{6}.Name = 'vert_L1_inf';
     %L2
-    FEB_struct.Geometry.NodeSet{7}.Set = bc(2).vert_sup; 
+    FEB_struct.Geometry.NodeSet{7}.Set = bc(2).vert_sup;
     FEB_struct.Geometry.NodeSet{7}.Name = 'vert_L2_sup';
-    FEB_struct.Geometry.NodeSet{8}.Set = bc(2).vert_inf; 
+    FEB_struct.Geometry.NodeSet{8}.Set = bc(2).vert_inf;
     FEB_struct.Geometry.NodeSet{8}.Name = 'vert_L2_inf';
     %L3
-    FEB_struct.Geometry.NodeSet{9}.Set = bc(3).vert_sup; 
+    FEB_struct.Geometry.NodeSet{9}.Set = bc(3).vert_sup;
     FEB_struct.Geometry.NodeSet{9}.Name = 'vert_L3_sup';
-    FEB_struct.Geometry.NodeSet{10}.Set = bc(3).vert_inf; 
+    FEB_struct.Geometry.NodeSet{10}.Set = bc(3).vert_inf;
     FEB_struct.Geometry.NodeSet{10}.Name = 'vert_L3_inf';
     
     % bc
@@ -664,36 +662,36 @@ elseif nbodies==3
     
 elseif nbodies==4
     %IVD2
-    FEB_struct.Geometry.NodeSet{3}.Set = bcIVD(2).sup; 
+    FEB_struct.Geometry.NodeSet{3}.Set = bcIVD(2).sup;
     FEB_struct.Geometry.NodeSet{3}.Name = 'disc_sup2';
-    FEB_struct.Geometry.NodeSet{4}.Set = bcIVD(2).sup; 
+    FEB_struct.Geometry.NodeSet{4}.Set = bcIVD(2).sup;
     FEB_struct.Geometry.NodeSet{4}.Name = 'disc_inf2';
     %IVD3
-     FEB_struct.Geometry.NodeSet{5}.Set = bcIVD(3).sup; 
+    FEB_struct.Geometry.NodeSet{5}.Set = bcIVD(3).sup;
     FEB_struct.Geometry.NodeSet{5}.Name = 'disc_sup3';
-    FEB_struct.Geometry.NodeSet{6}.Set = bcIVD(3).sup; 
+    FEB_struct.Geometry.NodeSet{6}.Set = bcIVD(3).sup;
     FEB_struct.Geometry.NodeSet{6}.Name = 'disc_inf3';
     %L1
-    FEB_struct.Geometry.NodeSet{7}.Set = bc(1).vert_sup; 
+    FEB_struct.Geometry.NodeSet{7}.Set = bc(1).vert_sup;
     FEB_struct.Geometry.NodeSet{7}.Name = 'vert_L1_sup';
-    FEB_struct.Geometry.NodeSet{8}.Set = bc(1).vert_inf; 
+    FEB_struct.Geometry.NodeSet{8}.Set = bc(1).vert_inf;
     FEB_struct.Geometry.NodeSet{8}.Name = 'vert_L1_inf';
     %L2
-    FEB_struct.Geometry.NodeSet{9}.Set = bc(2).vert_sup; 
+    FEB_struct.Geometry.NodeSet{9}.Set = bc(2).vert_sup;
     FEB_struct.Geometry.NodeSet{9}.Name = 'vert_L2_sup';
-    FEB_struct.Geometry.NodeSet{10}.Set = bc(2).vert_inf; 
+    FEB_struct.Geometry.NodeSet{10}.Set = bc(2).vert_inf;
     FEB_struct.Geometry.NodeSet{10}.Name = 'vert_L2_inf';
     %L3
-    FEB_struct.Geometry.NodeSet{11}.Set = bc(3).vert_sup; 
+    FEB_struct.Geometry.NodeSet{11}.Set = bc(3).vert_sup;
     FEB_struct.Geometry.NodeSet{11}.Name = 'vert_L3_sup';
-    FEB_struct.Geometry.NodeSet{12}.Set = bc(3).vert_inf; 
+    FEB_struct.Geometry.NodeSet{12}.Set = bc(3).vert_inf;
     FEB_struct.Geometry.NodeSet{12}.Name = 'vert_L3_inf';
     %L4
-    FEB_struct.Geometry.NodeSet{13}.Set = bc(4).vert_sup; 
+    FEB_struct.Geometry.NodeSet{13}.Set = bc(4).vert_sup;
     FEB_struct.Geometry.NodeSet{13}.Name = 'vert_L4_sup';
-    FEB_struct.Geometry.NodeSet{14}.Set = bc(4).vert_inf; 
+    FEB_struct.Geometry.NodeSet{14}.Set = bc(4).vert_inf;
     FEB_struct.Geometry.NodeSet{14}.Name = 'vert_L4_inf';
-   
+    
     % BC
     FEB_struct.Boundary.Fix{1}.bc='x';
     FEB_struct.Boundary.Fix{1}.SetName=FEB_struct.Geometry.NodeSet{14}.Name;
@@ -705,44 +703,44 @@ elseif nbodies==4
     
 elseif nbodies==5
     %IVD2
-    FEB_struct.Geometry.NodeSet{3}.Set = bcIVD(2).sup; 
+    FEB_struct.Geometry.NodeSet{3}.Set = bcIVD(2).sup;
     FEB_struct.Geometry.NodeSet{3}.Name = 'disc_sup2';
-    FEB_struct.Geometry.NodeSet{4}.Set = bcIVD(2).sup; 
+    FEB_struct.Geometry.NodeSet{4}.Set = bcIVD(2).sup;
     FEB_struct.Geometry.NodeSet{4}.Name = 'disc_inf2';
     %IVD3
-     FEB_struct.Geometry.NodeSet{5}.Set = bcIVD(3).sup; 
+    FEB_struct.Geometry.NodeSet{5}.Set = bcIVD(3).sup;
     FEB_struct.Geometry.NodeSet{5}.Name = 'disc_sup3';
-    FEB_struct.Geometry.NodeSet{6}.Set = bcIVD(3).sup; 
+    FEB_struct.Geometry.NodeSet{6}.Set = bcIVD(3).sup;
     FEB_struct.Geometry.NodeSet{6}.Name = 'disc_inf3';
-       %IVD4
-     FEB_struct.Geometry.NodeSet{7}.Set = bcIVD(4).sup; 
+    %IVD4
+    FEB_struct.Geometry.NodeSet{7}.Set = bcIVD(4).sup;
     FEB_struct.Geometry.NodeSet{7}.Name = 'disc_sup4';
-    FEB_struct.Geometry.NodeSet{8}.Set = bcIVD(4).sup; 
+    FEB_struct.Geometry.NodeSet{8}.Set = bcIVD(4).sup;
     FEB_struct.Geometry.NodeSet{8}.Name = 'disc_inf4';
     %L1
-    FEB_struct.Geometry.NodeSet{9}.Set = bc(1).vert_sup; 
+    FEB_struct.Geometry.NodeSet{9}.Set = bc(1).vert_sup;
     FEB_struct.Geometry.NodeSet{9}.Name = 'vert_L1_sup';
-    FEB_struct.Geometry.NodeSet{10}.Set = bc(1).vert_inf; 
+    FEB_struct.Geometry.NodeSet{10}.Set = bc(1).vert_inf;
     FEB_struct.Geometry.NodeSet{10}.Name = 'vert_L1_inf';
     %L2
-    FEB_struct.Geometry.NodeSet{11}.Set = bc(2).vert_sup; 
+    FEB_struct.Geometry.NodeSet{11}.Set = bc(2).vert_sup;
     FEB_struct.Geometry.NodeSet{11}.Name = 'vert_L2_sup';
-    FEB_struct.Geometry.NodeSet{12}.Set = bc(2).vert_inf; 
+    FEB_struct.Geometry.NodeSet{12}.Set = bc(2).vert_inf;
     FEB_struct.Geometry.NodeSet{12}.Name = 'vert_L2_inf';
     %L3
-    FEB_struct.Geometry.NodeSet{13}.Set = bc(3).vert_sup; 
+    FEB_struct.Geometry.NodeSet{13}.Set = bc(3).vert_sup;
     FEB_struct.Geometry.NodeSet{13}.Name = 'vert_L3_sup';
-    FEB_struct.Geometry.NodeSet{14}.Set = bc(3).vert_inf; 
+    FEB_struct.Geometry.NodeSet{14}.Set = bc(3).vert_inf;
     FEB_struct.Geometry.NodeSet{14}.Name = 'vert_L3_inf';
     %L4
-    FEB_struct.Geometry.NodeSet{15}.Set = bc(4).vert_sup; 
+    FEB_struct.Geometry.NodeSet{15}.Set = bc(4).vert_sup;
     FEB_struct.Geometry.NodeSet{15}.Name = 'vert_L4_sup';
-    FEB_struct.Geometry.NodeSet{16}.Set = bc(4).vert_inf; 
+    FEB_struct.Geometry.NodeSet{16}.Set = bc(4).vert_inf;
     FEB_struct.Geometry.NodeSet{16}.Name = 'vert_L4_inf';
-     %L5
-    FEB_struct.Geometry.NodeSet{17}.Set = bc(5).vert_sup; 
+    %L5
+    FEB_struct.Geometry.NodeSet{17}.Set = bc(5).vert_sup;
     FEB_struct.Geometry.NodeSet{17}.Name = 'vert_L5_sup';
-    FEB_struct.Geometry.NodeSet{18}.Set = bc(5).vert_inf; 
+    FEB_struct.Geometry.NodeSet{18}.Set = bc(5).vert_inf;
     FEB_struct.Geometry.NodeSet{18}.Name = 'vert_L5_inf';
     
     % BC
@@ -752,7 +750,7 @@ elseif nbodies==5
     FEB_struct.Boundary.Fix{2}.SetName=FEB_struct.Geometry.NodeSet{18}.Name;
     FEB_struct.Boundary.Fix{3}.bc='z';
     FEB_struct.Boundary.Fix{3}.SetName=FEB_struct.Geometry.NodeSet{18}.Name;
-
+    
 end
 
 
@@ -763,10 +761,10 @@ FEB_struct.Boundary.Prescribe{1}.bc='z';
 FEB_struct.Boundary.Prescribe{1}.lc=1;
 FEB_struct.Boundary.Prescribe{1}.nodeScale=ones(size(bc(1).vert_sup));
 
- plotV(V(bc(1).vert_sup,:),'b.','MarkerSize',markerSize),hold on;
- %colormap(autumn);
- camlight headlight;
- set(gca,'FontSize',fontSize);
+plotV(V(bc(1).vert_sup,:),'b.','MarkerSize',markerSize),hold on;
+%colormap(autumn);
+camlight headlight;
+set(gca,'FontSize',fontSize);
 %Adding load information
 %{
 forceMagnitude=[0 0 -2000];
@@ -811,60 +809,60 @@ FEB_struct.Contact{2}.Surface{2}.SetName=FEB_struct.Geometry.Surface{4}.Name;
 FEB_struct.Contact{2}.Surface{2}.Type='slave';
 
 if nbodies ==3
-
-%contact L2-IVD2
+    
+    %contact L2-IVD2
     FEB_struct.Geometry.Surface{5}.Set= F(2).vert_inf;
     FEB_struct.Geometry.Surface{5}.Type='tri3';
     FEB_struct.Geometry.Surface{5}.Name='Contact_master_inf_L2';
-
+    
     FEB_struct.Geometry.Surface{6}.Set=FI_sup2;
     FEB_struct.Geometry.Surface{6}.Type='quad4';
     FEB_struct.Geometry.Surface{6}.Name='Contact_slave_sup_I2';
-
+    
     FEB_struct.Contact{3}.Surface{1}.SetName=FEB_struct.Geometry.Surface{5}.Name;
     FEB_struct.Contact{3}.Surface{1}.Type='master';
     FEB_struct.Contact{3}.Surface{2}.SetName=FEB_struct.Geometry.Surface{6}.Name;
     FEB_struct.Contact{3}.Surface{2}.Type='slave';
-
+    
     %contact L3- IVD2
     FEB_struct.Geometry.Surface{7}.Set= F(3).vert_sup;
     FEB_struct.Geometry.Surface{7}.Type='tri3';
     FEB_struct.Geometry.Surface{7}.Name='Contact_master_sup_L3';
-
+    
     FEB_struct.Geometry.Surface{8}.Set=FI_inf2;
     FEB_struct.Geometry.Surface{8}.Type='quad4';
     FEB_struct.Geometry.Surface{8}.Name='Contact_slave_inf_I2';
-
+    
     FEB_struct.Contact{4}.Surface{1}.SetName=FEB_struct.Geometry.Surface{7}.Name;
     FEB_struct.Contact{4}.Surface{1}.Type='master';
     FEB_struct.Contact{4}.Surface{2}.SetName=FEB_struct.Geometry.Surface{8}.Name;
     FEB_struct.Contact{4}.Surface{2}.Type='slave';
     
 elseif  nbodies ==4
-
-%contact L2-IVD2
+    
+    %contact L2-IVD2
     FEB_struct.Geometry.Surface{5}.Set= F(2).vert_inf;
     FEB_struct.Geometry.Surface{5}.Type='tri3';
     FEB_struct.Geometry.Surface{5}.Name='Contact_master_inf_L2';
-
+    
     FEB_struct.Geometry.Surface{6}.Set=FI_sup2;
     FEB_struct.Geometry.Surface{6}.Type='quad4';
     FEB_struct.Geometry.Surface{6}.Name='Contact_slave_sup_I2';
-
+    
     FEB_struct.Contact{3}.Surface{1}.SetName=FEB_struct.Geometry.Surface{5}.Name;
     FEB_struct.Contact{3}.Surface{1}.Type='master';
     FEB_struct.Contact{3}.Surface{2}.SetName=FEB_struct.Geometry.Surface{6}.Name;
     FEB_struct.Contact{3}.Surface{2}.Type='slave';
-
+    
     %contact L3- IVD2
     FEB_struct.Geometry.Surface{7}.Set= F(3).vert_sup;
     FEB_struct.Geometry.Surface{7}.Type='tri3';
     FEB_struct.Geometry.Surface{7}.Name='Contact_master_sup_L3';
-
+    
     FEB_struct.Geometry.Surface{8}.Set=FI_inf2;
     FEB_struct.Geometry.Surface{8}.Type='quad4';
     FEB_struct.Geometry.Surface{8}.Name='Contact_slave_inf_I2';
-
+    
     FEB_struct.Contact{4}.Surface{1}.SetName=FEB_struct.Geometry.Surface{7}.Name;
     FEB_struct.Contact{4}.Surface{1}.Type='master';
     FEB_struct.Contact{4}.Surface{2}.SetName=FEB_struct.Geometry.Surface{8}.Name;
@@ -873,41 +871,41 @@ elseif  nbodies ==4
     FEB_struct.Geometry.Surface{9}.Set= F(4).vert_sup;
     FEB_struct.Geometry.Surface{9}.Type='tri3';
     FEB_struct.Geometry.Surface{9}.Name='Contact_master_sup_L4';
-
+    
     FEB_struct.Geometry.Surface{10}.Set=FI_inf3;
     FEB_struct.Geometry.Surface{10}.Type='quad4';
     FEB_struct.Geometry.Surface{10}.Name='Contact_slave_inf_I3';
-
+    
     FEB_struct.Contact{5}.Surface{1}.SetName=FEB_struct.Geometry.Surface{9}.Name;
     FEB_struct.Contact{5}.Surface{1}.Type='master';
     FEB_struct.Contact{5}.Surface{2}.SetName=FEB_struct.Geometry.Surface{10}.Name;
     FEB_struct.Contact{5}.Surface{2}.Type='slave';
- 
+    
 elseif  nbodies ==5
-
-%contact L2-IVD2
+    
+    %contact L2-IVD2
     FEB_struct.Geometry.Surface{5}.Set= F(2).vert_inf;
     FEB_struct.Geometry.Surface{5}.Type='tri3';
     FEB_struct.Geometry.Surface{5}.Name='Contact_master_inf_L2';
-
+    
     FEB_struct.Geometry.Surface{6}.Set=FI_sup2;
     FEB_struct.Geometry.Surface{6}.Type='quad4';
     FEB_struct.Geometry.Surface{6}.Name='Contact_slave_sup_I2';
-
+    
     FEB_struct.Contact{3}.Surface{1}.SetName=FEB_struct.Geometry.Surface{5}.Name;
     FEB_struct.Contact{3}.Surface{1}.Type='master';
     FEB_struct.Contact{3}.Surface{2}.SetName=FEB_struct.Geometry.Surface{6}.Name;
     FEB_struct.Contact{3}.Surface{2}.Type='slave';
-
+    
     %contact L3- IVD2
     FEB_struct.Geometry.Surface{7}.Set= F(3).vert_sup;
     FEB_struct.Geometry.Surface{7}.Type='tri3';
     FEB_struct.Geometry.Surface{7}.Name='Contact_master_sup_L3';
-
+    
     FEB_struct.Geometry.Surface{8}.Set=FI_inf2;
     FEB_struct.Geometry.Surface{8}.Type='quad4';
     FEB_struct.Geometry.Surface{8}.Name='Contact_slave_inf_I2';
-
+    
     FEB_struct.Contact{4}.Surface{1}.SetName=FEB_struct.Geometry.Surface{7}.Name;
     FEB_struct.Contact{4}.Surface{1}.Type='master';
     FEB_struct.Contact{4}.Surface{2}.SetName=FEB_struct.Geometry.Surface{8}.Name;
@@ -916,29 +914,30 @@ elseif  nbodies ==5
     FEB_struct.Geometry.Surface{9}.Set= F(4).vert_sup;
     FEB_struct.Geometry.Surface{9}.Type='tri3';
     FEB_struct.Geometry.Surface{9}.Name='Contact_master_sup_L4';
-
+    
     FEB_struct.Geometry.Surface{10}.Set=FI_inf3;
     FEB_struct.Geometry.Surface{10}.Type='quad4';
     FEB_struct.Geometry.Surface{10}.Name='Contact_slave_inf_I3';
-
+    
     FEB_struct.Contact{5}.Surface{1}.SetName=FEB_struct.Geometry.Surface{9}.Name;
     FEB_struct.Contact{5}.Surface{1}.Type='master';
     FEB_struct.Contact{5}.Surface{2}.SetName=FEB_struct.Geometry.Surface{10}.Name;
     FEB_struct.Contact{5}.Surface{2}.Type='slave';
-     %contact L5- IVD4
+    %contact L5- IVD4
     FEB_struct.Geometry.Surface{11}.Set= F(5).vert_sup;
     FEB_struct.Geometry.Surface{11}.Type='tri3';
     FEB_struct.Geometry.Surface{11}.Name='Contact_master_sup_L5';
-
+    
     FEB_struct.Geometry.Surface{12}.Set=FI_inf4;
     FEB_struct.Geometry.Surface{12}.Type='quad4';
     FEB_struct.Geometry.Surface{12}.Name='Contact_slave_inf_I4';
-
+    
     FEB_struct.Contact{6}.Surface{1}.SetName=FEB_struct.Geometry.Surface{11}.Name;
     FEB_struct.Contact{6}.Surface{1}.Type='master';
     FEB_struct.Contact{6}.Surface{2}.SetName=FEB_struct.Geometry.Surface{12}.Name;
     FEB_struct.Contact{6}.Surface{2}.Type='slave';
 end
+
 %surface for pressure
 %{
 FEB_struct.Geometry.Surface{9}.Set= F(1).vert_sup;
@@ -946,9 +945,7 @@ FEB_struct.Geometry.Surface{9}.Type='tri3';
 FEB_struct.Geometry.Surface{9}.Name='pressure';
 %}
 
-
 %% add discreteset for ligaments
-
 
 
 %% contact definition
@@ -959,25 +956,23 @@ FEB_struct.Contact{1}.Values={0,tolerance,contactPenalty,0,10,0.01};
 FEB_struct.Contact{2}.Type='tied';
 FEB_struct.Contact{2}.Properties={'laugon','tolerance','penalty','minaug','maxaug','search_tolerance'};
 FEB_struct.Contact{2}.Values={0,tolerance,contactPenalty,0,10,0.01};
+
 if nbodies==3
     FEB_struct.Contact{3} = FEB_struct.Contact{1};
-    FEB_struct.Contact{4} = FEB_struct.Contact{1};
-
+    FEB_struct.Contact{4} = FEB_struct.Contact{1};    
 elseif nbodies==4
     FEB_struct.Contact{3} = FEB_struct.Contact{1};
     FEB_struct.Contact{4} = FEB_struct.Contact{1};
     FEB_struct.Contact{5} = FEB_struct.Contact{1};
     FEB_struct.Contact{6} = FEB_struct.Contact{1};
 elseif nbodies==5
-     FEB_struct.Contact{3} = FEB_struct.Contact{1};
+    FEB_struct.Contact{3} = FEB_struct.Contact{1};
     FEB_struct.Contact{4} = FEB_struct.Contact{1};
     FEB_struct.Contact{5} = FEB_struct.Contact{1};
     FEB_struct.Contact{6} = FEB_struct.Contact{1};
     FEB_struct.Contact{7} = FEB_struct.Contact{6};
-    FEB_struct.Contact{8} = FEB_struct.Contact{6};
-   
+    FEB_struct.Contact{8} = FEB_struct.Contact{6};    
 end
-
 
 %% Control section
 FEB_struct.Step{1}.Control.AnalysisType='static';
@@ -1005,7 +1000,7 @@ FEB_struct.Output.VarTypes={'displacement','stress','relative volume'};
 %Load curves
 FEB_struct.LoadData.LoadCurves.id=[1 2];
 FEB_struct.LoadData.LoadCurves.type={'linear' 'linear' 'linear' 'linear' ...
-'linear' 'linear' 'linear' 'linear' 'linear' };
+    'linear' 'linear' 'linear' 'linear' 'linear' };
 FEB_struct.LoadData.LoadCurves.loadPoints={[0 0;1 -1];[0 0;1 0.2]};
 
 %{
@@ -1026,23 +1021,21 @@ FEB_struct.Loads.Surface_load{1}.lc=1;
 
 FEB_struct.disp_opt=0; %Turn on displaying of progress
 
-
 febStruct2febFile(FEB_struct);
 
 %% run FEBio
- %% run FEBio
-    FEBioRunStruct.run_filename=FEB_struct.run_filename;
-    FEBioRunStruct.run_logname=FEB_struct.run_logname;
-    FEBioRunStruct.disp_on=1;
-    FEBioRunStruct.disp_log_on=1;
-    FEBioRunStruct.runMode= 'internal';%'external';
-    FEBioRunStruct.t_check=5; %Time for checking log file (dont set too small)
-    FEBioRunStruct.maxtpi=1e99; %Max analysis time
-    FEBioRunStruct.maxLogCheckTime=10; %Max log file checking time
-    %FEBioRunStruct.FEBioPath='C:\Program Files\febio-2.5.1\bin\febio2.exe';
-    
-   %[runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
-    
+FEBioRunStruct.run_filename=FEB_struct.run_filename;
+FEBioRunStruct.run_logname=FEB_struct.run_logname;
+FEBioRunStruct.disp_on=1;
+FEBioRunStruct.disp_log_on=1;
+FEBioRunStruct.runMode= 'internal';%'external';
+FEBioRunStruct.t_check=5; %Time for checking log file (dont set too small)
+FEBioRunStruct.maxtpi=1e99; %Max analysis time
+FEBioRunStruct.maxLogCheckTime=10; %Max log file checking time
+%FEBioRunStruct.FEBioPath='C:\Program Files\febio-2.5.1\bin\febio2.exe';
+
+%[runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
+
 %{
     if runFlag==1
         %savepath = sprintf('C:\Users\lavecchc\Desktop\sensitivity');
@@ -1108,5 +1101,4 @@ febStruct2febFile(FEB_struct);
 
 %}
 
- end
-    
+end

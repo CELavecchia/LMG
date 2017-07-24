@@ -7,7 +7,7 @@ I need:
 
 %}
 
-function  [CM, CM_IVD,mesh_struct_IVD2,Lmes]  = orientation_gui( Lmes, mesh_struct_IVD2, nbodies, alpha, IVD, heighV )
+function  [CM, CM_IVD,mesh_struct_IVD2,Lmes]  = orientation_gui( Lmes, mesh_struct_IVD2, alpha, IVD, heighV )
 %name = sprintf('./Lmes_v2.mat');
 %load(name);
 
