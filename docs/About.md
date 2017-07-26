@@ -6,8 +6,7 @@ description: "About LMG"
 header-img: "img/home-bg.jpg"
 ---
 
-<img src="img/logos/logo.png" alt="LMG_logo" width="100%">
-<!-- ![LMG_logo](img/logos/logo.png){:width="100%"} -->
+![LMG_logo](img/logos/logo.png){:width="100%"}
 
 # Table of contents
 - [Project Summary](#Summary)  
@@ -27,7 +26,7 @@ This toolbox allows to obtain:
 
 A work in progress feature is the pre-processing of the solid meshed model to prepare the .feb file to run the finite element simulation in FEBio.
 
-<img src="img/overview.png" alt="LMG overview" width="100%">
+![LMG overview](img/overview.png){:width="100%"}
 
 # Installation <a name="Installation"></a>  
 ### 1. Installing 3rd party packages
