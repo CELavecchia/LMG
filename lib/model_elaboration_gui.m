@@ -3,7 +3,7 @@
 - parameterization.m
 - load_IVD_2.m
 %}
-function mesh_struct_IVD2 =model_elaboration_gui(dimensions)
+function [mesh_struct_IVD2,L_no] =model_elaboration_gui(dimensions)
 
 %fprintf('fitting\n');
 
@@ -14,7 +14,7 @@ VP = 50;
 fprintf('access the models\n\n')
 
 % Set folder and file name
-defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+defaultFolder = fileparts(mfilename('fullpath'));
 pathName=fullfile(defaultFolder,'data','input');
 vertName=fullfile(pathName,'L.mat'); 
 ivdName=fullfile(pathName,'mesh_struct_IVD.mat');
@@ -53,9 +53,9 @@ fprintf('parameterization vertebrae\n\n')
 ind = 1;
 for (j = 1:5)
 
-   [ L_body_rem, L_proc_rem, L_ped_rem,L_lam_rem] = ...
+   [ L_body_rem, L_proc_rem, L_ped_rem,L_lam_rem, EPsup, EPinf] = ...
     remove_overlap_gui(L_body_nt_r(:,ind:ind+2), L.vert_nt.L_proc_grid_nt(:,ind:ind+2),...
-    L.vert_nt.L_lam_nt(:,ind:ind+2), ...
+    L.vert_nt.L_lam_nt(:,ind:ind+2),L.Vsurf_sup.EP_sup(:,ind:ind+2),L.Vsurf_inf.EP_inf(:,ind:ind+2), ...
     EPWu_half(j), EPDu(j), hL(j), lam_l(j), sc_d(j), sc_w(j), PDW(j), PDH(j),...
     TP_wu(j), TP_wi(j), PDt(j),PDs(j));
 
@@ -63,6 +63,8 @@ for (j = 1:5)
     L_no(j).proc = L_proc_rem;
     L_no(j).ped = L_ped_rem;
     L_no(j).lam = L_lam_rem;
+    L_no(j).EPsup = EPsup;
+    L_no(j).EPinf = EPinf;
 
     ind = ind +3;
     

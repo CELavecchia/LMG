@@ -7,17 +7,18 @@ I need:
 
 %}
 
-function  [CM, CM_IVD,mesh_struct_IVD2,Lmes]  = orientation_gui( Lmes, mesh_struct_IVD2, alpha, IVD, heighV )
-%name = sprintf('./Lmes_v2.mat');
-%load(name);
+function  [CM, CM_IVD,mesh_struct_IVD2,Lmes, EP]  = orientation_gui( Lmes, mesh_struct_IVD2, alpha, IVD, heighV, L )
 
+
+%save the coordinates of the upper and inferior surface in the structure EP
+count =1;
+for(j=1:5)
     
-    %plot3(Lmes(1).VT(:,1),Lmes(1).VT(:,2),Lmes(1).VT(:,3),'.b'),hold on;
-    %plot3(Lmes(2).VT(:,1),Lmes(2).VT(:,2),Lmes(2).VT(:,3),'.b'),hold on;
-    %plot3(Lmes(3).VT(:,1),Lmes(3).VT(:,2),Lmes(3).VT(:,3),'.g'),hold on;
-   % plot3(mesh_struct_IVD2(1).V(:,1),mesh_struct_IVD2(1).V(:,2),mesh_struct_IVD2(1).V(:,3),'.b'),hold on
-
-
+    EP(j).sup= L(j).EPsup;
+    EP(j).inf= L(j).EPinf;
+    count = count +3;
+    
+end
 
 
 alpha_lum = alpha;
@@ -175,8 +176,10 @@ ii = 0;
             %traslation
 
             Lmes(count_v).VT = [ Lmes(count_v).VT(:,1), Lmes(count_v).VT(:,2)-t(1), Lmes(count_v).VT(:,3)-abs(t(2)) ];
-
-
+            EP(count_v).sup = [EP(count_v).sup(:,1),EP(count_v).sup(:,2)-t(1),EP(count_v).sup(:,3)-abs(t(2))];
+            EP(count_v).inf = [EP(count_v).inf(:,1),EP(count_v).inf(:,2)-t(1),EP(count_v).inf(:,3)-abs(t(2))];
+             
+            
             % update the CM vector
             bc(count_v).V_cent_sup(:) = [ bc(count_v).V_cent_sup(1), bc(count_v).V_cent_sup(2)-(t(1)), bc(count_v).V_cent_sup(3)-abs(t(2)) ];
             bc(count_v).V_cent_inf(:) = [ bc(count_v).V_cent_inf(1), bc(count_v).V_cent_inf(2)-(t(1)), bc(count_v).V_cent_inf(3)-abs(t(2)) ];
@@ -209,11 +212,12 @@ ii = 0;
             CM(count_v,7:9) = CG(count_v,:);
 
            %size(CM)
-            [ Lmes(count_v).VT , CM(count_v,:)] = ...
-                moving_rot_post_mesh_gui(Lmes(count_v).VT, CM(count_v,:), t, mat);
-           
+            [ Lmes(count_v).VT , EP(count_v).sup, EP(count_v).inf, CM(count_v,:)] = ...
+                moving_rot_post_mesh_gui(Lmes(count_v).VT, CM(count_v,:), EP(count_v).sup,...
+                EP(count_v).inf, t, mat);
+           %
             rot_angle(count_v) = angle; 
-            
+           
             count_v = count_v+1 ;
        
        else
@@ -226,20 +230,22 @@ ii = 0;
             %plot3(CM_IVD(count_ivd,1),CM_IVD(count_ivd,2),CM_IVD(count_ivd,3),'Og'),hold on;
             %plot3(mesh_struct_IVD2(count_ivd).V(:,1),mesh_struct_IVD2(count_ivd).V(:,2),mesh_struct_IVD2(count_ivd).V(:,3),'.m' ),hold on;
             [ mesh_struct_IVD2(count_ivd).V , CM_IVD(count_ivd,:)] = ...
-                moving_rot_post_mesh_gui(mesh_struct_IVD2(count_ivd).V, CM_IVD(count_ivd,:), t, mat);
+               moving_rot_post_mesh_ivd_gui(mesh_struct_IVD2(count_ivd).V, CM_IVD(count_ivd,:), t, mat);
             % plot3(CM_IVD(count_ivd,1),CM_IVD(count_ivd,2),CM_IVD(count_ivd,3),'Og'),hold on;
             %plot3(mesh_struct_IVD2(count_ivd).V(:,1),mesh_struct_IVD2(count_ivd).V(:,2),mesh_struct_IVD2(count_ivd).V(:,3),'.m' ),hold on;
         
             
             count_ivd = count_ivd +1;
-           
+            
        end
+           
        
     end
       
 
 
- [CM, CM_IVD,mesh_struct_IVD2,Lmes] = position_curve_gui2(Lmes, mesh_struct_IVD2, CM, CM_IVD, alpha, hl,rot_angle, IVD, heighV);  
-  
+%Lmes(5).VT
+ [CM, CM_IVD, mesh_struct_IVD2,Lmes,EP] = position_curve_gui2(Lmes, mesh_struct_IVD2, CM, CM_IVD,  alpha, hl,rot_angle, IVD, heighV,EP );  
+  %CM_IVD,CM_IVD,
    
 end

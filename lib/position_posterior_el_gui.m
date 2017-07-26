@@ -1,4 +1,4 @@
-function [L_body, L_proc, L_ped, L_lam2] = position_posterior_el(L_body, L_lam, L_proc, ...
+function [L_body, L_proc, L_ped, L_lam2,EPsup,EPinf] = position_posterior_el(L_body, L_lam, L_proc, EPsup,EPinf,...
     EPWu_half, EPDu, hL, lam_l, sc_d, sc_w, PD_w, PD_h, TP_wu, TP_wi,  PDt, PDs)%F_h,
 %{
 function [L_body, L_proc, L_ped, L_lam2,vh_vert_regist] = position_posterior_el(L_body, L_lam, L_proc, L_ped,...
@@ -23,6 +23,8 @@ y_max_body = max(evaluate_body(:,2));
 init_EPDu = (y_max_body - y_min_body);
 sc_EPDu = EPDu/init_EPDu;
 L_body = [L_body(:,1),L_body(:,2)*sc_EPDu,L_body(:,3)];
+EPsup = [EPsup(:,1),EPsup(:,2)*sc_EPDu,EPsup(:,3)];
+EPinf = [EPinf(:,1),EPinf(:,2)*sc_EPDu,EPinf(:,3)];
 %plot3(L_body(:,1),L_body(:,2),L_body(:,3),'.r'),hold on;
 
 
@@ -38,6 +40,8 @@ x_max_body = max(evaluate_body(:,1));
 init_EPWu = (x_max_body - x_min_body);
 sc_EPWu = (EPWu_half*2)/init_EPWu;   % evaluate directly EPWu
 L_body = [L_body(:,1)*sc_EPWu, L_body(:,2),L_body(:,3)];
+EPsup = [EPsup(:,1)*sc_EPWu,EPsup(:,2),EPsup(:,3)];
+EPinf = [EPinf(:,1)*sc_EPWu,EPinf(:,2),EPinf(:,3)];
 %plot3(L_body(:,1),L_body(:,2),L_body(:,3),'.r'),grid on,hold on;
 
 %% ------- LAMINA

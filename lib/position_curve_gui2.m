@@ -1,6 +1,9 @@
 % move the bodies on the curve
-function [CM, CM_IVD,mesh_struct_IVD2,L_no_r] = position_curve_gui2(L_no_r, mesh_struct_IVD2, CM,CM_IVD, alpha, hL,rot_angle, IVD, heighV)
+%function [CM, CM_IVD,mesh_struct_IVD2,L_no_r] = position_curve_gui2(L_no_r, mesh_struct_IVD2, CM,CM_IVD, alpha, hL,rot_angle, IVD, heighV)
+
+function [CM,CM_IVD, mesh_struct_IVD2, L_no_r, EP] = position_curve_gui2(L_no_r, mesh_struct_IVD2,  CM,CM_IVD, alpha, hL,rot_angle, IVD, heighV, EP)
   
+
 alpha_lum = alpha;%43.49;
 %to obtain more points
 %alpha_lum = 45;
@@ -60,12 +63,13 @@ for(body=1:5)
             %move vertebrae; traslation vector
             t(count_v,:) = [ y_ip-CM(count_v,8) 0] ; %keep the same z of CM
 
-            L_no_r(count_v).VT = [L_no_r(count_v).VT(:,1) L_no_r(count_v).VT(:,2)+(t(count_v,1)) L_no_r(count_v).VT(:,3)]; 
+            L_no_r(count_v).VT = [L_no_r(count_v).VT(:,1) L_no_r(count_v).VT(:,2)+(t(count_v,1)) L_no_r(count_v).VT(:,3)+5]; 
+            EP(count_v).sup = [EP(count_v).sup(:,1) EP(count_v).sup(:,2)+(t(count_v,1)) EP(count_v).sup(:,3)+5];
+            EP(count_v).inf = [EP(count_v).inf(:,1) EP(count_v).inf(:,2)+(t(count_v,1)) EP(count_v).inf(:,3)+5];
             
             %update the CM
             CM(count_v,2:3) = [ CM(count_v,2)+t(count_v,1) CM(count_v,3)]; % z in the first one stay the same
             CM(count_v,5:6) = [ CM(count_v,5)+t(count_v,1) CM(count_v,6)]; % z in the first one stay the same
-
             CM(count_v,8:9) = [ CM(count_v,8)+t(count_v,1) CM(count_v,9)]; % z in the first one stay the same
             z_old = CM(count_v,9);
 
@@ -77,6 +81,7 @@ for(body=1:5)
          elseif count_v==2
             z1 = z1-half_h(count_v);
             z_ip = z_old-(z1);
+
             angle_cor(count_ang) = atan(z_ip/r);
 
             z1_new = r*sin(angle_cor(count_ang))+abs(z_old);
@@ -88,9 +93,13 @@ for(body=1:5)
             y_ip = -y1_new;% -r * cos(angle_cor) + y_cent
             %move vertebrae; traslation vector
                 %CM
+                
             t(count_v,:) = [ y_ip-abs(CM(count_v,8)) z_ip-abs(CM(count_v,9))];
 
             L_no_r(count_v).VT = [L_no_r(count_v).VT(:,1) L_no_r(count_v).VT(:,2)+(t(count_v,1)) L_no_r(count_v).VT(:,3)-(t(count_v,2))];
+            EP(count_v).sup = [EP(count_v).sup(:,1) EP(count_v).sup(:,2)+(t(count_v,1)) EP(count_v).sup(:,3)-(t(count_v,2))];
+            EP(count_v).inf = [EP(count_v).inf(:,1) EP(count_v).inf(:,2)+(t(count_v,1)) EP(count_v).inf(:,3)-(t(count_v,2))];
+            
             %update CM
             CM(count_v,2:3) = [ CM(count_v,2)+t(count_v,1) CM(count_v,3)-t(count_v,2)]; % z in the first one stay the same
             CM(count_v,5:6) = [ CM(count_v,5)+t(count_v,1) CM(count_v,6)-t(count_v,2)]; % z in the first one stay the same
@@ -106,7 +115,7 @@ for(body=1:5)
             count_v = count_v +1;
     else
             z1 = z1 - half_h(count_v);
-            z = abs(z1) - z_old ;%length segment
+            z = abs(z1) - z_old; %length segment
             z_perp = z*cos(angle_cor(count_ang-1));     %perpendicular segment
 
             angle_cor(count_ang) = atan(z_perp/r);
@@ -116,6 +125,11 @@ for(body=1:5)
 
             t(count_v,:) = [ y_ip-abs(CM(count_v,8)) z_ip-abs(CM(count_v,9))];
             L_no_r(count_v).VT = [L_no_r(count_v).VT(:,1) L_no_r(count_v).VT(:,2)+(t(count_v,1)) L_no_r(count_v).VT(:,3)-(t(count_v,2))];
+            EP(count_v).sup = [EP(count_v).sup(:,1) EP(count_v).sup(:,2)+(t(count_v,1)) EP(count_v).sup(:,3)-(t(count_v,2))];
+            EP(count_v).inf = [EP(count_v).inf(:,1) EP(count_v).inf(:,2)+(t(count_v,1)) EP(count_v).inf(:,3)-(t(count_v,2))];
+            
+            
+            
              CM(count_v,2:3) = [ CM(count_v,2)+t(count_v,1) CM(count_v,3)-t(count_v,2)]; % z in the first one stay the same
             CM(count_v,5:6) = [ CM(count_v,5)+t(count_v,1) CM(count_v,6)-t(count_v,2)]; % z in the first one stay the same
 
@@ -135,6 +149,9 @@ for(body=1:5)
          
 end
 
+
+
+
 %move IVD
 for(j =1:4)
 
@@ -146,16 +163,17 @@ for(j =1:4)
    CM_IVD(j,7:9) =[CM_IVD(j,7)-t(1),CM_IVD(j,8)+abs(t(2)),CM_IVD(j,9)-abs(t(3))];
 
    mesh_struct_IVD2(j).V = [ mesh_struct_IVD2(j).V(:,1)-t(1) mesh_struct_IVD2(j).V(:,2)+abs(t(2)) mesh_struct_IVD2(j).V(:,3)-abs(t(3))];
-  
+   
+      
+   
   %plot3(CM_IVD(j,1),CM_IVD(j,2),CM_IVD(j,3),'.c'),hold on;
   %plot3(mesh_struct_IVD2(j).V(:,1),mesh_struct_IVD2(j).V(:,2), mesh_struct_IVD2(j).V(:,3),'.g'),hold on;
 end
 
 
 
-[CM, CM_IVD,mesh_struct_IVD2,L_no_r] = check_position_arch_gui2(CM, CM_IVD, mesh_struct_IVD2, L_no_r);
-
-
+[CM, CM_IVD,mesh_struct_IVD2,L_no_r, EP] = check_position_arch_gui2(CM, CM_IVD, mesh_struct_IVD2, L_no_r, EP);
+%[CM,mesh_struct_IVD2,L_no_r, EP] = check_position_arch_gui2(CM, mesh_struct_IVD2, L_no_r, EP);
 
 
 

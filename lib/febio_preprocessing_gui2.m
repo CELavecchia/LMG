@@ -9,10 +9,10 @@ function FEB_struct = febio_preprocessing_gui(modelName, nbodies, Lmes, mesh_str
 filePath=mfilename('fullpath');
 savePath=fullfile(fileparts(filePath));
 
-%vp = [44 50 60];% 44 46 48 50 52 54 56 58 60];
+
 
 defaultFolder = fileparts(fileparts(mfilename('fullpath')));
-outputpathName=fullfile(defaultFolder,'data','output','mat');
+outputpathName=fullfile(defaultFolder,'LMG','data','output','mat');
 struct_name = fullfile(outputpathName,'model.mat');
 
 %%
@@ -71,9 +71,6 @@ Eanul=5;
 vanul=0.3;
 
 
-%c10_an =0.18; c01_an =0.045;%Schmidt "Application of a calibration method..."
-
-
 % Mooney-Rivlin Fan et al
 %{
 k = 1; c1= 0.56; c2= 0.14;
@@ -105,19 +102,6 @@ phi=90;
 
 %==============================================================
 fprintf('import vertebrae dataset\n\n');
-
-%[Lmes] = FU_whole_model;
-%load('C:/Users/lavecchc/Dropbox/Internship_Melbourne/model_November/febio_preprocessing/Lmes_v2.mat');
-%for(j=1:nbodies)
-%    name = sprintf('./Lmes_v2.mat');
-% load(name);
-%Lmes2(j) = Lmes;
-%end
-%name =sprintf('C:/Users/lavecchc/Dropbox/Internship_Melbourne/model_November/SENS_ANALYSIS/L1L5_VP%d.mat',vp(j)); %IVD
-%load(name);
-
-
-%[mesh_struct_IVD,Lmes] = vertical_orientation(mesh_struct_IVD2,Lmes);
 
 % IVD 1-2
 VT = mesh_struct_IVD2(1).V;
@@ -164,8 +148,8 @@ F4 = mesh_struct_IVD2(4).FE;
 if nbodies ==2              % FU L1 - IVD1 - L2
     
     %--------------- only to avoid the initial penetration-----------
-    Lmes(2).VT(:,3) = Lmes(2).VT(:,3)-5;
-    VT(:,3) = VT(:,3) -2.5;
+    %Lmes(2).VT(:,3) = Lmes(2).VT(:,3)-5;
+    %VT(:,3) = VT(:,3) -2.5;
     
     cFigure;
     title('FEBio pre-processing','FontSize',fontSize);
@@ -1034,71 +1018,30 @@ FEBioRunStruct.maxtpi=1e99; %Max analysis time
 FEBioRunStruct.maxLogCheckTime=10; %Max log file checking time
 %FEBioRunStruct.FEBioPath='C:\Program Files\febio-2.5.1\bin\febio2.exe';
 
-%[runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
-
+[runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
 %{
-    if runFlag==1
-        %savepath = sprintf('C:\Users\lavecchc\Desktop\sensitivity');
- %       fullfile(savePath,FEB_struct.run_output_names{1})
-    [~, N_disp_mat,~]=importFEBio_logfile(FEB_struct.run_output_names{1}); %Nodal displacements
-
-    DN=N_disp_mat(FI_sup1,end,:); %Final nodal displacements
+if runFlag==1
+      
+ %% POST-PROCESSING
+    [time_mat, N_disp_mat,~]=importFEBio_logfile(FEB_struct.run_output_names{1}); %Nodal displacements
     
-    %max_disp(j,:) = min(DN); %because the displacement is negative
-    
-    V_def=VT+DN;
+    DN=N_disp_mat(:,2:end,:);
     DN_magnitude=sqrt(sum(DN.^2,2));
+    %nodeset in deformed state
+    V_def=V+DN;
     
-    define fb
-    [CF]=vertexToFaceMeasure(Fb,DN_magnitude);
-
+    %Visualise the results
     hf1=cFigure;
-    title('The deformed model','FontSize',fontSize);
+    title('The deformed model (Z)','FontSize',fontSize);
     xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
 
-    hps=patch('Faces',Fbnew,'Vertices',VT,'FaceColor','flat','CData',CF);
+    patch('Faces',Fbnew,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
+    patch('Faces',Fbnew2,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
+    patch('Faces',Lmes(1).Fb,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
+    patch('Faces',Lmes(2).Fb,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
+    patch('Faces',Lmes(3).Fb,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
 
-    view(3); axis tight;  axis equal;  grid on;
-    colormap gjet; colorbar;
-    % camlight headlight;
-    set(gca,'FontSize',fontSize);
-    drawnow;
-   
-    [time_mat, N_force_mat,~]=importFEBio_logfile(FEB_struct.run_output_names{2}); %Nodal forces
-    time_mat=[0; time_mat(:)]; %Time
-    
-    %DERIVING STRESS METRICS
-
-    %Get Z forces
-    FZ=sum(N_force_mat(FI_sup1,end,:),1);
-    FZ=[0; FZ(:)]; %Mean top surface nodal forces
-
-    %Derive applied stretch
-    DZ_set=N_disp_mat(FI_sup1,end,:); %Final nodal displacements
-    DZ_set=mean(DZ_set,1);
-    %ezample
-    sampleHeight = 10;
-    
-    stretch_sim=(DZ_set+sampleHeight)./sampleHeight;
-    stretch_sim=[1; stretch_sim(:)];
-    
-    initialArea = 20;
-    %Derive simulated Cauchy stress (alternatively import stress and take the mean)
-    currentArea=initialArea./stretch_sim;
-    stress_cauchy_sim=FZ./currentArea; %Cauchy stress
-    stress_cauchy_sim=stress_cauchy_sim.*1e3; %Scale to kPa
-    hf1=cFigure;
-    title('Stress curve, upper plate L1','FontSize',fontSize);
-    xlabel('Time (s)','FontSize',fontSize); ylabel('\sigma Cauchy stress (kPa)','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
-    lineWidth = 1;
-    plot(time_mat(:),stress_cauchy_sim(:),'r.-','lineWidth',lineWidth,'markerSize',markerSize);
-
-    view(2); axis tight;  grid on;
-    set(gca,'FontSize',fontSize);
-    drawnow;
-    
-    end
-
+    view; grid on;
+    colormap jet; colorbar;
 %}
-
 end

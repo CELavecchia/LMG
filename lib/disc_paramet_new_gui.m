@@ -9,8 +9,7 @@ function   disc_nodes = disc_paramet_new_gui( vertices, EPWu_half, EPDu, IVD);
     min_x = min(vertices(:,1));
     width_h = (max_x - min_x)/2; %half width
     sc_aw = EPWu_half/width_h; %scaling factor
-   % plot3(anulus_nodes(:,1)*sc_aw,anulus_nodes(:,2),anulus_nodes(:,3),'.r'),hold on, grid on;
-    %plot3(nucleus_nodes(:,1)*sc_aw,nucleus_nodes(:,2),nucleus_nodes(:,3),'.r'),hold on, grid on;
+  
     vertices_w = [ vertices(:,1)*sc_aw, vertices(:,2), vertices(:,3)];
     
     %depth
@@ -19,7 +18,7 @@ function   disc_nodes = disc_paramet_new_gui( vertices, EPWu_half, EPDu, IVD);
     max_y = max(anulus_meanx(:,2));
     min_y = min(anulus_meanx(:,2));
     depth = (max_y - min_y); %half depth
-    sc_d = EPDu/depth; %scaling factor
+    sc_d = (EPDu-2)/depth; %scaling factor
     %plot3(anulus_nodes(:,1),anulus_nodes(:,2)*sc_d,anulus_nodes(:,3),'.r'),hold on, grid on;
     %plot3(nucleus_nodes(:,1),nucleus_nodes(:,2)*sc_d,nucleus_nodes(:,3),'.r'),hold on, grid on;
     disc_nodes = [vertices_w(:,1),vertices_w(:,2)*sc_d,vertices_w(:,3)];
