@@ -5,9 +5,9 @@ url: "https://github.io/CELavecchia/LMG"
 
 # Secondary Parameters
 baseurl: ""
-header-img: img/home-bg.jpg
+header-img: docs/img/home-bg.jpg
 headercolor: "#FFFFFF"
-logo: "img/logos/logo.png"
+logo: "docs/img/logos/logo.png"
 
 # Tertiary Parameters
 github_username:  CELavecchia
