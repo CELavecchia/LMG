@@ -34,9 +34,8 @@ Skip this step if finite element analysis with FEBio is not required.
 
 | Package | Purpose | Included? | Download |
 |:--|:--|:--:|--:|
-|[__FEBio__](https://febio.org) <br/> [![FEBio](/img/logos/febioLogo.png){:height="100px"}](https://febio.org)|FEBio is a finite element solver and is used in GIBBON for all finite element analysis. Use of FEBio is featured in many of the `DEMO_FEBio...` files |__No__|[__FEBio website__](https://febio.org) |
-|[__GIBBON__](https://gibboncode.org) <br/> [![export_fig](/img/logos/gibbonlogo.png){:height="100px"}](https://gibboncode.org)| <br/> GIBBON The Geometry and Image-Based Bioengineering add-On |__No__|[__GIBBON website__](https://gibboncode.org) |
-|[__export_fig__](https://github.com/altmany/export_fig) <br/> [![export_fig](/img/logos/export_fig_logo.jpg){:height="100px"}](https://github.com/altmany/export_fig)| <br/> `export_fig` helps to export publication quality images (e.g. .png, .jpg, .pdf, .eps), in GIBBON it is integrated in the export figure widget `efw` to export such images from the `cFigure` window directly. `export_fig` is also used for exporting images for creation of .gif animations with the GIBBON `anim8` function |__No__|[__Get via GitHub__](https://github.com/altmany/export_fig) <br/> <br/> [__Download zip__](https://github.com/altmany/export_fig/archive/master.zip)|
+|[__FEBio__](https://febio.org) <br/> [![FEBio](/img/logos/febioLogo.png){:height="100px"}](https://febio.org)|FEBio is a finite element solver and is used in LMG and GIBBON for all finite element analysis. |__No__|[__FEBio website__](https://febio.org) |
+|<br/> [__GIBBON__](https://gibboncode.org) <br/> [![export_fig](/img/logos/gibbonlogo.png){:height="100px"}](https://gibboncode.org)| <br/> GIBBON The Geometry and Image-Based Bioengineering add-On |__No__|[__GIBBON website__](https://gibboncode.org) |
 |<br/> [__TetGen__]() <br/> [![tetGen](/img/logos/tetgenLogo.gif){:height="100px"}](https://wias-berlin.de/software/tetgen/)| <br/> Is used for tetrahedral meshing (and possibly constrained 3D Delaunay tessellation). See for instance `HELP_runTetGen.m`|__Yes__| For other versions: [__TetGen website__](https://wias-berlin.de/software/tetgen/)|
 
 ### 2. Run `install_LMG.m`
