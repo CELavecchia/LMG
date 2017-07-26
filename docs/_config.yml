@@ -1,10 +1,10 @@
 # Site settings
 title: LMG
 description: "The Lumbar Model Generator"
-url: "https://celavecchia.github.io/LMG/"
+url: "https://celavecchia.github.io"
 
 # Secondary Parameters
-baseurl: ""
+baseurl: "LMG"
 header-img: img/home-bg.jpg
 headercolor: "#FFFFFF"
 logo: "img/logos/logo.png"
