@@ -14,9 +14,9 @@ VP = 50;
 fprintf('access the models\n\n')
 
 % Set folder and file name
-defaultFolder = fileparts(mfilename('fullpath'));
+defaultFolder = fileparts(fileparts(mfilename('fullpath')));
 pathName=fullfile(defaultFolder,'data','input');
-vertName=fullfile(pathName,'L.mat'); 
+vertName=fullfile(pathName,'L.mat');
 ivdName=fullfile(pathName,'mesh_struct_IVD.mat');
 
 outputpathName=fullfile(defaultFolder,'data','output','mat');
