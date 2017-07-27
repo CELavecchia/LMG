@@ -1,5 +1,5 @@
 %% FEBio preprocessing - FU L1-L2-L3
-function FEB_struct = febio_preprocessing_gui(modelName, nbodies, Lmes, mesh_struct_IVD2)
+function FEB_struct = febio_preprocessing_gui(modelName, nbodies, Lmes, mesh_struct_IVD2, runFebio)
 
 %%
 % fibres embedded
@@ -12,7 +12,7 @@ savePath=fullfile(fileparts(filePath));
 
 
 defaultFolder = fileparts(fileparts(mfilename('fullpath')));
-outputpathName=fullfile(defaultFolder,'LMG','data','output','mat');
+outputpathName=fullfile(defaultFolder,'data','output','mat');
 struct_name = fullfile(outputpathName,'model.mat');
 
 %%
@@ -152,8 +152,9 @@ if nbodies ==2              % FU L1 - IVD1 - L2
     %VT(:,3) = VT(:,3) -2.5;
     
     cFigure;
-    title('FEBio pre-processing','FontSize',fontSize);
+    
     subplot(1,2,1)
+    title('FEBio model','FontSize',fontSize);
     patch('Faces',Lmes(1).Fb,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',Lmes(2).Fb,'Vertices',Lmes(2).VT,'FaceColor','flat','CData',Lmes(2).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',F1,'Vertices',VT,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
@@ -163,6 +164,7 @@ if nbodies ==2              % FU L1 - IVD1 - L2
     set(gca,'FontSize',fontSize);
     
     subplot(1,2,2)
+    title('FEBio pre-processing-BC applied','FontSize',fontSize);
     patch('Faces',Lmes(1).Fb,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',Lmes(2).Fb,'Vertices',Lmes(2).VT,'FaceColor','flat','CData',Lmes(2).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',F1,'Vertices',VT,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
@@ -1018,8 +1020,12 @@ FEBioRunStruct.maxtpi=1e99; %Max analysis time
 FEBioRunStruct.maxLogCheckTime=10; %Max log file checking time
 %FEBioRunStruct.FEBioPath='C:\Program Files\febio-2.5.1\bin\febio2.exe';
 
-[runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
-%{
+
+if runFebio == 1 
+    [runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
+end
+    
+    %{
 if runFlag==1
       
  %% POST-PROCESSING

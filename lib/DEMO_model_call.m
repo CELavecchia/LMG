@@ -30,7 +30,7 @@ edgeWidth=1.5;
 
 % file name
 defaultFolder = fileparts(fileparts(mfilename('fullpath')));
-outputpathName=fullfile(defaultFolder,'LMG','data','output','tmp')
+outputpathName=fullfile(defaultFolder,'data','output','tmp');
 febName=fullfile(outputpathName,'model_febio');
 
 
@@ -205,18 +205,20 @@ drawnow;
 %%
 % febio_preprocessing_gui2.m prepares the febio input file. The material
 % properties, contacts and the boundary conditions are defined. 
-% This feature is in work in progress. Presently, it can prepare and run the 
-% FE model for a single functional unit (FU), level L1-L2 and the IVD in between them.
+% This feature is in work in progress. Presently, it can prepare and run 
+%(if the flag runFEBio is set equal to 1 the FE model for a single 
+%functional unit (FU), level L1-L2 and the IVD in between them.
 % The vertebrae L2 is fully constrained at the bottom surface and the prescribed displacement
 %on the  upper surface is 1 mm.
 
 nbodies = 2;
+runFEBio = 0;
 fprintf('----------------- FE pre-processing: FEBio --------------------\n\n');
-FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes2,IVD);
+FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes2,IVD, runFEBio);
 
 
 %%
-% 26/07/2017
+% 27/07/2017
 %
 %
 % _*LMG*_

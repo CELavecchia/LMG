@@ -19,7 +19,7 @@ markerSize1=50;
 filePath=mfilename('fullpath');
 
 %path to get the datasets
-defaultFolder = fileparts(mfilename('fullpath'));
+defaultFolder = fileparts( fileparts(mfilename('fullpath')));
 inputpathName=fullfile(defaultFolder,'data','output','point_cloud'); 
 
 %path to save the dataset
@@ -33,7 +33,7 @@ fprintf('import vertebrae point clouds to mesh \n');
 %-----------------      import point clouds          ----------------------
 for(j = 1:5)
     
-    disp(sprintf('\n\n Working on the vertenbra L%d \n',j))
+    disp(sprintf('\n\n Working on the vertebrae L%d \n',j))
     
     name_body=fullfile(inputpathName,sprintf('L_body_%d.txt',j));
     %name_body = sprintf('./output/point_cloud/L_body_%d.txt',j);
@@ -55,7 +55,7 @@ for(j = 1:5)
 %------ remove the overlappingpoints 
 
 %vertebral body
-fprintf('------------- meshing the v body  ------------\n');
+fprintf('------------- meshing the vertebral body  ------------\n');
 [body, Eb,Vb] = obtain_geometry_gui( L_body);
 Eb = body.Mesh.Elements';
 Vb = body.Mesh.Nodes';
@@ -230,7 +230,7 @@ regionA=[v1*2 v2*4];
 
 
 
-stringOpt='-ENFpq2.0AaYQ';
+stringOpt='-pq2.0AaYQ';
 
 inputStruct.stringOpt=stringOpt;
 inputStruct.Faces=F_mix;
