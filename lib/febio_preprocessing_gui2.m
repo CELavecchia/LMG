@@ -22,15 +22,9 @@ faceAlpha1=0.5;
 faceAlpha2=0.5;
 edgeColor=0.25*ones(1,3);
 edgeWidth=1.5;
-markerSize1=20;
+markerSize=15;
 
 figColor='w'; figColorDef='white';
-fontSize=15;
-faceAlpha1=0.8;
-faceAlpha2=1;
-edgeColor=0.25*ones(1,3);
-edgeWidth=1.5;
-markerSize=20;
 
 
 % contact properties
@@ -158,7 +152,7 @@ if nbodies ==2              % FU L1 - IVD1 - L2
     patch('Faces',Lmes(1).Fb,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',Lmes(2).Fb,'Vertices',Lmes(2).VT,'FaceColor','flat','CData',Lmes(2).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',F1,'Vertices',VT,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
-    axis tight;  axis equal;  grid on;
+    grid on;
     colormap(autumn);
     camlight headlight;
     set(gca,'FontSize',fontSize);
@@ -168,7 +162,7 @@ if nbodies ==2              % FU L1 - IVD1 - L2
     patch('Faces',Lmes(1).Fb,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',Lmes(2).Fb,'Vertices',Lmes(2).VT,'FaceColor','flat','CData',Lmes(2).Cb,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     patch('Faces',F1,'Vertices',VT,'FaceAlpha',faceAlpha2,'lineWidth',edgeWidth,'edgeColor',edgeColor);
-    axis tight;  axis equal;  grid on;hold on;
+    set(gca,'FontSize',fontSize);  grid on;hold on;
     
     %-------------------------------------------------------
     
@@ -614,6 +608,8 @@ if nbodies==2
     %  colormap(autumn);
     camlight headlight;
     set(gca,'FontSize',fontSize);
+    axisGeom(gca,fontSize); 
+
     
     
 elseif nbodies==3
@@ -751,6 +747,8 @@ plotV(V(bc(1).vert_sup,:),'b.','MarkerSize',markerSize),hold on;
 %colormap(autumn);
 camlight headlight;
 set(gca,'FontSize',fontSize);
+axisGeom(gca,fontSize); 
+
 %Adding load information
 %{
 forceMagnitude=[0 0 -2000];
@@ -1014,7 +1012,7 @@ FEBioRunStruct.run_filename=FEB_struct.run_filename;
 FEBioRunStruct.run_logname=FEB_struct.run_logname;
 FEBioRunStruct.disp_on=1;
 FEBioRunStruct.disp_log_on=1;
-FEBioRunStruct.runMode= 'internal';%'external';
+FEBioRunStruct.runMode= 'external';%'internal';
 FEBioRunStruct.t_check=5; %Time for checking log file (dont set too small)
 FEBioRunStruct.maxtpi=1e99; %Max analysis time
 FEBioRunStruct.maxLogCheckTime=10; %Max log file checking time
@@ -1025,7 +1023,7 @@ if runFebio == 1
     [runFlag]=runMonitorFEBio(FEBioRunStruct);%START FEBio NOW!!!!!!!!
 end
     
-    %{
+    
 if runFlag==1
       
  %% POST-PROCESSING
@@ -1042,12 +1040,12 @@ if runFlag==1
     xlabel('X','FontSize',fontSize); ylabel('Y','FontSize',fontSize); zlabel('Z','FontSize',fontSize); hold on;
 
     patch('Faces',Fbnew,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
-    patch('Faces',Fbnew2,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
     patch('Faces',Lmes(1).Fb,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
     patch('Faces',Lmes(2).Fb,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
-    patch('Faces',Lmes(3).Fb,'Vertices',V_def(:,:,end),'FaceColor','flat','CData',DN_magnitude(:,:,end));
-
+    
     view; grid on;
     colormap jet; colorbar;
-%}
+    axisGeom(gca,fontSize); 
+
+
 end

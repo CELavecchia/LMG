@@ -9,9 +9,9 @@ clear; close all; clc;
 % The bodies are oriented according to the lumbar angle, which can be imported
 % by the user or left as default value of 43.49°. Finally, the meshed model
 % is pre-processed to run the simulation in FEBio. Material properties, 
-%contacts and boundary conditions are defined and it can be directly run.
-%In this demo, only a functional unit (L1-L2 and the IVD in-between) is
-%pre-processed and the simulation is directly sent to FEBio.
+% contacts and boundary conditions are defined and it can be directly run.
+% In this demo, only a functional unit (L1-L2 and the IVD in-between) is
+% pre-processed and the simulation is directly sent to FEBio.
 %
 %
 % 
@@ -37,38 +37,48 @@ febName=fullfile(outputpathName,'model_febio');
 
 fprintf('--------------------LMG: LUMBAR MODEL GENERATOR------------------\n\n\n')
 %%
-%functionality still work in progress 
-%function to call the gui and start the model. The user can define to use
-%subject-specific dimensions (measured on scans) or average dimensions. The
-%average dimensions are based on the height, age and gender of a person, 
-%and evaluated in the next section. 
-%See the paper "Lumbar Model Generator..." for more information about the
-%dimensions to measure on the scan.
+% Function to call the gui and start the model. The user can define to use
+% subject-specific dimensions (measured on scans) or average dimensions. The
+% average dimensions are based on the height, age and gender of a person, 
+% and evaluated in the function averageModelInput.m 
+% 
+% The GUI will ask the following inputs:
+% - type of model ( 0 average, 1 subject-specific)
+% if 0, another GUI will ask the following information:
+%   - sex of the patient ( m or f)
+%   - age (in years)
+%   - height (in cm)
+%   - alpha (lumbar curvature angle)
+% If 1
+%  - sex of the patient ( m or f)
+%   - age (in years)
+%   - height (in cm)
+%   - alpha (lumbar curvature angle)
+%   - path of the excel file where the dimensions for each vertebrae and
+%   IVD are saved
 
-%[model, var] =GUI_test1
-%{
-get:
-- type of model (a.average, b.subject-specific)
-- num of bodies (you can use the whole spine or only a functional unit.. it
-has to be improved)
-- output (.stl,.feb,.inp)
-- alpha (lumbar curvature angle, if zero then the bodies are arranged in vertical)
-
-%}
+[varagout] = GUI_import; 
 
 %% Build default average geometrical model 
 %%
 % If the user decides to use the model based on average dimensions, the
 % function averageModelInput is used. In this function the correlation
 % analysis between the height, age and all the dimensions identified on the
-% vertebrae are evaluated (see the paper "Lumbar model generator... " for
-% more information about the dimensions).
+% vertebrae are evaluated.
 
 fprintf('-----------------Build the geometrical model--------------------\n');
+ model_type=varagout.type ;
+switch model_type 
+     case 0
 
-[dimensions] = averageModelInput;
+         [dimensions] = averageModelInput(varagout);
+         alpha = varagout.alpha;%43.49;
+    case 1
+    
+        dimensions = varagout;
+        alpha = varagout.alpha;
+end
 
-alpha = 43.49;
 
 %%
 % Use the dimensions obtained to parameterize the model
@@ -120,7 +130,7 @@ L=YE>mean(Y);
 [Fs,Cs]=element2patch(Lmes(1).E(L,:),Lmes(1).C(L));
 
 cFigure;
-%subplot(1,2,1);
+subplot(1,2,1);
 hold on; 
 title('Solid tetrahedral meshing','FontSize',fontSize);
 patch('Faces',Lmes(1).FT,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).C,'lineWidth',0.2,'edgeColor',edgeColor);
@@ -130,10 +140,10 @@ axisGeom(gca,fontSize);
 camlight headlight;
 drawnow;
 
-cFigure;
+
 hold on; 
 
-%subplot(1,2,2);
+subplot(1,2,2);
 title('Cut view of the solid tetrahedral mesh model','FontSize',fontSize);
 patch('Faces',Fs,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Cs,'lineWidth',0.2,'edgeColor',edgeColor);
 axisGeom(gca,fontSize); 
@@ -148,13 +158,12 @@ drawnow;
 [CM, CM_IVD,mesh_struct_IVD2,Lmes2, EP] = orientation_gui(Lmes, mesh_struct_IVD2, alpha, dimensions.IVD, dimensions.hL, L_vert);
 
 
-%% orientation post mesh
+%% 
 % The meshes of the IVD is modified to fit better the curvatures of the
 % vertebrae in order to facilitate the contacts and run a faster
 % simulation.
 
 [IVD] = enforce_contacts(mesh_struct_IVD2,EP);
-
 
 %% 
 % Visualizing the whole model.
@@ -206,19 +215,19 @@ drawnow;
 % febio_preprocessing_gui2.m prepares the febio input file. The material
 % properties, contacts and the boundary conditions are defined. 
 % This feature is in work in progress. Presently, it can prepare and run 
-%(if the flag runFEBio is set equal to 1 the FE model for a single 
-%functional unit (FU), level L1-L2 and the IVD in between them.
+% (if the flag runFEBio is set equal to 1) the FE model for a single 
+% functional unit (FU), level L1-L2 and the IVD in between them.
 % The vertebrae L2 is fully constrained at the bottom surface and the prescribed displacement
-%on the  upper surface is 1 mm.
+% on the  upper surface is 1 mm.
 
 nbodies = 2;
-runFEBio = 0;
+runFEBio = 1;
 fprintf('----------------- FE pre-processing: FEBio --------------------\n\n');
 FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes2,IVD, runFEBio);
 
 
 %%
-% 27/07/2017
+% 
 %
 %
 % _*LMG*_

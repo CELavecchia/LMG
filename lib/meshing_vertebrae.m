@@ -182,8 +182,8 @@ if(j==1) %plot only the first
     patch('Faces',Ft,'Vertices',Vt,'FaceColor','r','FaceAlpha',faceAlpha1,'lineWidth',edgeWidth,'edgeColor',edgeColor);
     colormap(autumn(2));
     camlight headlight;
-    set(gca,'FontSize',fontSize);
-   axis tight;  axis equal;  %grid on;
+    axisGeom(gca,fontSize); 
+
 end
 
 outputpathstlName=fullfile(defaultFolder,'data','output','stl'); 

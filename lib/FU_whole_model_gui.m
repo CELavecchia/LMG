@@ -1,8 +1,9 @@
     % working on the FE model of L1-L2 and IVD
 
 %clear; close all; clc;
-function [Lmes] = FU_whole_model_gui(nbodies,stl)
+function [Lmes] = FU_whole_model_gui(stl)
 %%
+nbodies =5; %mesh all the vertebrae
 % Plot settings
 figColor='w'; figColorDef='white';
 fontSize=15;
@@ -16,7 +17,7 @@ markerSize1=50;
 filePath=mfilename('fullpath');
 
 %path to get the datasets
-defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+defaultFolder = fileparts(mfilename('fullpath'));
 inputpathName=fullfile(defaultFolder,'data','output','point_cloud'); 
 
 %path to save the dataset
@@ -30,7 +31,7 @@ fprintf('import vertebrae point clouds to mesh \n');
 %-----------------      import point clouds          ----------------------
 for(j = 1:5)
     
-    disp(sprintf('working on the vertenbra L%d \n',j))
+    disp(sprintf('\n\n Working on the vertenbra L%d \n',j))
     
     name_body=fullfile(inputpathName,sprintf('L_body_%d.txt',j));
     %name_body = sprintf('./output/point_cloud/L_body_%d.txt',j);

@@ -7,20 +7,30 @@ function [dimensions] = averageModelInput(varargin)
 % IVD : intervertebral disc height in order from the first (L1) to the last
 % (L5)
 
-
 %% parse input
+h = varargin{1}.height; % patient height (cm)
+age = varargin{1}.age; % Patient age (years)
+sex = varargin{1}.sex;
 
-switch nargin
-    case 0        
-        h = 180; % patient height (cm)
-        age = 36; % Patient age (years)
-    case 1
-        h = varargin{1}; % patient height (cm)
-        age = 36; % Patient age (years)
-    case 2
-        h = varargin{1}; % patient height (cm)
-        age = varargin{2}; % Patient age (years)
-end
+% this one can be used in case of hybrid models. Presently, all the
+%  dimensions are required from the scan.
+
+% switch varargin{1}.type
+%     case NaN        
+%         h = 180; % patient height (cm)
+%         age = 36; % Patient age (years)
+%         sex = 'm';
+%     case 0
+%         h = varargin{1}.height; % patient height (cm)
+%         age = varargin{1}.age; % Patient age (years)
+%         sex = varargin{1}.sex;
+%  
+%     case 1 %subject specific dimensions
+%         h = varargin{1}.height;% patient height (cm)
+%         age = varargin{1}.age; % Patient age (years)
+%         sex = varargin{1}.sex;
+%        
+% end
 
 %%
 
@@ -39,7 +49,7 @@ hL(4) = 5.63/100 * CTLh_v;
 hL(5) = 5.71/100 * CTLh_v;
 
 hL = hL*10; %in mm
-%plot(hL, '-.*b'),grid on;
+
 %% EPWu constants
 EPWu_a = 1.6836 ;
 EPWu_b = -1.598  ;
@@ -106,31 +116,28 @@ lam_l = [36.06 38.58 42.629 36.72 31.766]; %32.382
 %% IVD
 % IVD according to Shao those are the data for men; for women there are
 % other equations
-% men
-IVD_T12_L1 = 0.519 + 0.004903*age;  %_T12_L1 Actually I won t use it
-IVD(1) = 0.680 + 0.006201*age; %_L1_L2
-IVD(2) = 0.832 + 0.006687*age; %_L2_L3
-IVD(3) = 1.105 + 0.005455*age; %_L3_L4
-IVD(4) = 1.076 + 0.006952*age; %_L5_L5
-IVD(5) = 0.973 + 0.008630*age; %_L5_S1
+    
+if strcmp(sex,'m')==1
+    % men
+    IVD_T12_L1 = 0.519 + 0.004903*age;  %_T12_L1 Actually I won t use it
+    IVD(1) = 0.680 + 0.006201*age; %_L1_L2
+    IVD(2) = 0.832 + 0.006687*age; %_L2_L3
+    IVD(3) = 1.105 + 0.005455*age; %_L3_L4
+    IVD(4) = 1.076 + 0.006952*age; %_L5_L5
+    IVD(5) = 0.973 + 0.008630*age; %_L5_S1
+    
+    IVD = IVD *10;%in mm
+else
+    % women
 
-IVD = IVD *10;%in mm
-%{
-IDV2(1)= 12.35/100*IVDh  ;%L1-L2
-IDV2(2)= 15.07/100*IVDh   ;%L2-L3
-IDV2(3)= 18.41/100*IVDh   ;%L3-L4
-IDV2(4)= 18.83/100*IVDh   ;%L4-L5
-%IDV2(5)=
-%}
-% women
-%{
-IVD_T12_L1 = 0.433 + 0.004903*age;  %_T12_L1 Actually I won t use it
-IVD(1) = 0.627 + 0.004840*age; %_L1_L2
-IVD(2) = 0.817 + 0.004771*age; %_L2_L3
-IVD(3) = 0.985 + 0.004982*age; %_L3_L4
-IVD(4) = 1.051 + 0.005052*age; %_L5_L5
-IVD(5) = 0.926 + 0.008170*age; %_L5_S1
-%}
+    IVD_T12_L1 = 0.433 + 0.004903*age;  %_T12_L1 Actually I won t use it
+    IVD(1) = 0.627 + 0.004840*age; %_L1_L2
+    IVD(2) = 0.817 + 0.004771*age; %_L2_L3
+    IVD(3) = 0.985 + 0.004982*age; %_L3_L4
+    IVD(4) = 1.051 + 0.005052*age; %_L5_L5
+    IVD(5) = 0.926 + 0.008170*age; %_L5_S1
+    IVD = IVD *10;%in mm
+end
 
 
 %% pedicle angles

@@ -1,0 +1,636 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>DEMO_model_call</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-07-28"><meta name="DC.source" content="DEMO_model_call.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Lumbar Model Generator</a></li><li><a href="#3">Plotting settings</a></li><li><a href="#5">Control parameters</a></li><li><a href="#8">Build default average geometrical model</a></li><li><a href="#12">Mesh vertebrae</a></li><li><a href="#15">orientation post mesh</a></li><li><a href="#18">write &amp; run FEBio</a></li></ul></div><pre class="codeinput">clear; close <span class="string">all</span>; clc;
+</pre><h2 id="2">Lumbar Model Generator</h2><p>This demo generates a geometric model of the lumbar spine including: five vertebrae (L1-L5) and four intervertebral disc (IVD). In this demo the dimensions of the bodies are based on the age and height of a person. Then, the geometrical model is meshed, initially with surface meshes and then with solid meshes, using TetGen for the vertebrae and a custom-made algorithm for the IVD. The bodies are oriented according to the lumbar angle, which can be imported by the user or left as default value of 43.49&deg;. Finally, the meshed model is pre-processed to run the simulation in FEBio. Material properties, contacts and boundary conditions are defined and it can be directly run. In this demo, only a functional unit (L1-L2 and the IVD in-between) is pre-processed and the simulation is directly sent to FEBio.</p><pre class="language-matlab"><span class="keyword">for</span> more information: lavecchia.carolina@gmail.com
+</pre><h2 id="3">Plotting settings</h2><p>Define the parameters to use in all the plots</p><pre class="codeinput">fontSize=15;
+edgeColor=0.25*ones(1,3);
+edgeWidth=1.5;
+</pre><h2 id="5">Control parameters</h2><p>Define name and location for the febio file</p><pre class="codeinput"><span class="comment">% file name</span>
+defaultFolder = fileparts(fileparts(mfilename(<span class="string">'fullpath'</span>)));
+outputpathName=fullfile(defaultFolder,<span class="string">'data'</span>,<span class="string">'output'</span>,<span class="string">'tmp'</span>);
+febName=fullfile(outputpathName,<span class="string">'model_febio'</span>);
+
+
+
+fprintf(<span class="string">'--------------------LMG: LUMBAR MODEL GENERATOR------------------\n\n\n'</span>)
+</pre><pre class="codeoutput">--------------------LMG: LUMBAR MODEL GENERATOR------------------
+
+
+</pre><p>Function to call the gui and start the model. The user can define to use subject-specific dimensions (measured on scans) or average dimensions. The average dimensions are based on the height, age and gender of a person, and evaluated in the function averageModelInput.m</p><p>The GUI will ask the following inputs: - type of model ( 0 average, 1 subject-specific) if 0, another GUI will ask the following information:   - sex of the patient ( m or f)   - age (in years)   - height (in cm)   - alpha (lumbar curvature angle) If 1  - sex of the patient ( m or f)   - age (in years)   - height (in cm)   - alpha (lumbar curvature angle)   - path of the excel file where the dimensions for each vertebrae and   IVD are saved</p><pre class="codeinput">[varagout] = GUI_import;
+</pre><h2 id="8">Build default average geometrical model</h2><p>If the user decides to use the model based on average dimensions, the function averageModelInput is used. In this function the correlation analysis between the height, age and all the dimensions identified on the vertebrae are evaluated.</p><pre class="codeinput">fprintf(<span class="string">'-----------------Build the geometrical model--------------------\n'</span>);
+ model_type=varagout.type ;
+<span class="keyword">switch</span> model_type
+     <span class="keyword">case</span> 0
+
+         [dimensions] = averageModelInput(varagout);
+         alpha = varagout.alpha;<span class="comment">%43.49;</span>
+    <span class="keyword">case</span> 1
+
+        dimensions = varagout;
+        alpha = varagout.alpha;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">-----------------Build the geometrical model--------------------
+</pre><p>Use the dimensions obtained to parameterize the model</p><pre class="codeinput">[mesh_struct_IVD2,L_vert] = model_elaboration_gui(dimensions);
+</pre><pre class="codeoutput">access the models
+
+parameterization vertebrae
+
+parameterization IVD
+
+saving IVD structure
+
+saving the vertebrae point clouds
+saving the coordinates for the vertebrae L1 
+saving the coordinates for the vertebrae L2 
+saving the coordinates for the vertebrae L3 
+saving the coordinates for the vertebrae L4 
+saving the coordinates for the vertebrae L5 
+</pre><p>Visualizing the meshes for the IVD</p><pre class="codeinput">Y=mesh_struct_IVD2(1).V(:,2); YE=mean(Y(mesh_struct_IVD2(1).E),2);
+L=YE&gt;mean(Y);
+[Fs,Cs]=element2patch(mesh_struct_IVD2(1).E(L,:),mesh_struct_IVD2(1).C(L));
+
+cFigure;
+subplot(1,2,1);
+hold <span class="string">on</span>;
+title(<span class="string">'Solid hexahedral meshing IVD'</span>,<span class="string">'FontSize'</span>,fontSize);
+gpatch(mesh_struct_IVD2(1).Fb,mesh_struct_IVD2(1).V,mesh_struct_IVD2(1).faceBoundaryMarker);
+axisGeom(gca,fontSize);
+camlight <span class="string">headlight</span>;
+colormap(gjet);
+
+subplot(1,2,2);
+hold <span class="string">on</span>;
+title(<span class="string">'Cut view of the solid hexahedral mesh model - IVD'</span>,<span class="string">'FontSize'</span>,fontSize);
+gpatch(Fs,mesh_struct_IVD2(1).V,Cs);
+axisGeom(gca,fontSize);
+camlight <span class="string">headlight</span>;
+colormap(gjet);
+drawnow;
+</pre><img vspace="5" hspace="5" src="DEMO_model_call_01.png" style="width:1382px;height:710px;" alt=""> <h2 id="12">Mesh vertebrae</h2><p>Mesh the vertebrae. Initially obtaining a surface meshed model, that can be exported selecting stl =1 Then, the solid meshed model are obtained using TetGen</p><pre class="codeinput">fprintf(<span class="string">'\n-----------------Solid tetrahedral meshing--------------------\n\n'</span>);
+
+stl = 0; <span class="comment">%if stl=1 then save the stl files for the vertebrae</span>
+[Lmes] = meshing_vertebrae(stl);
+</pre><pre class="codeoutput">
+-----------------Solid tetrahedral meshing--------------------
+
+import vertebrae point clouds to mesh 
+
+
+ Working on the vertebrae L1 
+
+------------- meshing the vertebral body  ------------
+------------- meshing the pedicles and processes  ------------
+------------- meshing the lamina  ------------
+------------ writing the tetgen file---------------
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- TETGEN Tetrahedral meshing --- 28-Jul-2017 11:42:02
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Writing SMESH file --- 28-Jul-2017 11:42:02
+----&gt; Adding node field
+----&gt; Adding facet field
+----&gt; Adding holes specification
+----&gt; Adding region specification
+--- Done --- 28-Jul-2017 11:42:02
+--- Running TetGen to mesh input boundary--- 28-Jul-2017 11:42:02
+Opening C:\Users\lavecchc\Documents\GIBBON-master\GIBBON-master\lib_ext\tetGen\tempFiles\vertebrae_1.smesh. 
+--- Done --- 28-Jul-2017 11:42:03
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Importing TetGen files --- 28-Jul-2017 11:42:03
+--- Done --- 28-Jul-2017 11:42:03
+
+
+ Working on the vertebrae L2 
+
+------------- meshing the vertebral body  ------------
+------------- meshing the pedicles and processes  ------------
+------------- meshing the lamina  ------------
+------------ writing the tetgen file---------------
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- TETGEN Tetrahedral meshing --- 28-Jul-2017 11:42:17
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Writing SMESH file --- 28-Jul-2017 11:42:17
+----&gt; Adding node field
+----&gt; Adding facet field
+----&gt; Adding holes specification
+----&gt; Adding region specification
+--- Done --- 28-Jul-2017 11:42:17
+--- Running TetGen to mesh input boundary--- 28-Jul-2017 11:42:17
+Opening C:\Users\lavecchc\Documents\GIBBON-master\GIBBON-master\lib_ext\tetGen\tempFiles\vertebrae_2.smesh. 
+--- Done --- 28-Jul-2017 11:42:18
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Importing TetGen files --- 28-Jul-2017 11:42:18
+--- Done --- 28-Jul-2017 11:42:18
+
+
+ Working on the vertebrae L3 
+
+------------- meshing the vertebral body  ------------
+------------- meshing the pedicles and processes  ------------
+------------- meshing the lamina  ------------
+------------ writing the tetgen file---------------
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- TETGEN Tetrahedral meshing --- 28-Jul-2017 11:42:31
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Writing SMESH file --- 28-Jul-2017 11:42:31
+----&gt; Adding node field
+----&gt; Adding facet field
+----&gt; Adding holes specification
+----&gt; Adding region specification
+--- Done --- 28-Jul-2017 11:42:32
+--- Running TetGen to mesh input boundary--- 28-Jul-2017 11:42:32
+Opening C:\Users\lavecchc\Documents\GIBBON-master\GIBBON-master\lib_ext\tetGen\tempFiles\vertebrae_3.smesh. 
+--- Done --- 28-Jul-2017 11:42:33
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Importing TetGen files --- 28-Jul-2017 11:42:33
+--- Done --- 28-Jul-2017 11:42:33
+
+
+ Working on the vertebrae L4 
+
+------------- meshing the vertebral body  ------------
+------------- meshing the pedicles and processes  ------------
+------------- meshing the lamina  ------------
+------------ writing the tetgen file---------------
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- TETGEN Tetrahedral meshing --- 28-Jul-2017 11:42:46
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Writing SMESH file --- 28-Jul-2017 11:42:46
+----&gt; Adding node field
+----&gt; Adding facet field
+----&gt; Adding holes specification
+----&gt; Adding region specification
+--- Done --- 28-Jul-2017 11:42:46
+--- Running TetGen to mesh input boundary--- 28-Jul-2017 11:42:46
+Opening C:\Users\lavecchc\Documents\GIBBON-master\GIBBON-master\lib_ext\tetGen\tempFiles\vertebrae_4.smesh. 
+--- Done --- 28-Jul-2017 11:42:47
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Importing TetGen files --- 28-Jul-2017 11:42:47
+--- Done --- 28-Jul-2017 11:42:47
+
+
+ Working on the vertebrae L5 
+
+------------- meshing the vertebral body  ------------
+------------- meshing the pedicles and processes  ------------
+------------- meshing the lamina  ------------
+------------ writing the tetgen file---------------
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- TETGEN Tetrahedral meshing --- 28-Jul-2017 11:43:00
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Writing SMESH file --- 28-Jul-2017 11:43:00
+----&gt; Adding node field
+----&gt; Adding facet field
+----&gt; Adding holes specification
+----&gt; Adding region specification
+--- Done --- 28-Jul-2017 11:43:00
+--- Running TetGen to mesh input boundary--- 28-Jul-2017 11:43:00
+Opening C:\Users\lavecchc\Documents\GIBBON-master\GIBBON-master\lib_ext\tetGen\tempFiles\vertebrae_5.smesh. 
+--- Done --- 28-Jul-2017 11:43:01
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Importing TetGen files --- 28-Jul-2017 11:43:01
+--- Done --- 28-Jul-2017 11:43:02
+</pre><img vspace="5" hspace="5" src="DEMO_model_call_02.png" style="width:1382px;height:710px;" alt=""> <p>Visualizing the mesh obtained for the vertebrae L1. The cut view shows the elements of the vertebrae which correspond to the cancellous (in red) and the cortical bone (in yellow)</p><pre class="codeinput">Y=Lmes(1).VT(:,1); YE=mean(Y(Lmes(1).E),2);
+L=YE&gt;mean(Y);
+[Fs,Cs]=element2patch(Lmes(1).E(L,:),Lmes(1).C(L));
+
+cFigure;
+subplot(1,2,1);
+hold <span class="string">on</span>;
+title(<span class="string">'Solid tetrahedral meshing'</span>,<span class="string">'FontSize'</span>,fontSize);
+patch(<span class="string">'Faces'</span>,Lmes(1).FT,<span class="string">'Vertices'</span>,Lmes(1).VT,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>,<span class="string">'CData'</span>,Lmes(1).C,<span class="string">'lineWidth'</span>,0.2,<span class="string">'edgeColor'</span>,edgeColor);
+axis <span class="string">tight</span>;  axis <span class="string">equal</span>;  <span class="comment">%grid on;</span>
+colormap(autumn);
+axisGeom(gca,fontSize);
+camlight <span class="string">headlight</span>;
+drawnow;
+
+
+hold <span class="string">on</span>;
+
+subplot(1,2,2);
+title(<span class="string">'Cut view of the solid tetrahedral mesh model'</span>,<span class="string">'FontSize'</span>,fontSize);
+patch(<span class="string">'Faces'</span>,Fs,<span class="string">'Vertices'</span>,Lmes(1).VT,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>,<span class="string">'CData'</span>,Cs,<span class="string">'lineWidth'</span>,0.2,<span class="string">'edgeColor'</span>,edgeColor);
+axisGeom(gca,fontSize);
+colormap(autumn);
+camlight <span class="string">headlight</span>;
+drawnow;
+</pre><img vspace="5" hspace="5" src="DEMO_model_call_03.png" style="width:1382px;height:710px;" alt=""> <h2 id="15">orientation post mesh</h2><p>The meshed bodies (vertebrae and IVD) are oriented according to the lumbar curvature 'alpha', imported by the user.</p><pre class="codeinput">[CM, CM_IVD,mesh_struct_IVD2,Lmes2, EP] = orientation_gui(Lmes, mesh_struct_IVD2, alpha, dimensions.IVD, dimensions.hL, L_vert);
+</pre><p>The meshes of the IVD is modified to fit better the curvatures of the vertebrae in order to facilitate the contacts and run a faster simulation.</p><pre class="codeinput">[IVD] = enforce_contacts(mesh_struct_IVD2,EP);
+</pre><p>Visualizing the whole model.</p><pre class="codeinput">cFigure;
+subplot(1,2,1);
+title(<span class="string">'3D orientation'</span>,<span class="string">'FontSize'</span>,fontSize);
+
+<span class="keyword">for</span>(j=1:4)
+    patch(<span class="string">'Faces'</span>,IVD(j).FE,<span class="string">'Vertices'</span>,IVD(j).V,<span class="string">'FaceColor'</span>,<span class="string">'b'</span>,<span class="string">'faceAlpha'</span>,0.8,<span class="string">'edgeColor'</span>,<span class="string">'k'</span>,<span class="string">'lineWidth'</span>,0.5);<span class="comment">%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);</span>
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+<span class="keyword">for</span>(k=1:5)
+    patch(<span class="string">'Faces'</span>,Lmes2(k).FT,<span class="string">'Vertices'</span>,Lmes2(k).VT,<span class="string">'FaceColor'</span>,<span class="string">'r'</span>,<span class="string">'faceAlpha'</span>,0.8,<span class="string">'edgeColor'</span>,<span class="string">'k'</span>,<span class="string">'lineWidth'</span>,0.5);<span class="comment">%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);</span>
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+axisGeom(gca,fontSize);
+colormap(autumn);
+camlight <span class="string">headlight</span>;
+drawnow;
+
+subplot(1,2,2);
+ title(<span class="string">'Cut view of the solid meshed model'</span>,<span class="string">'FontSize'</span>,fontSize);
+<span class="keyword">for</span>(j =1:4)
+    Y=IVD(j).V(:,1); YE=mean(Y(IVD(j).E),2);
+    L=YE&gt;mean(Y);
+    [Fs,Cs]=element2patch(IVD(j).E(L,:),IVD(j).C(L));
+
+    patch(<span class="string">'Faces'</span>,Fs,<span class="string">'Vertices'</span>,IVD(j).V,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>,<span class="string">'CData'</span>,Cs,<span class="string">'lineWidth'</span>,0.2,<span class="string">'edgeColor'</span>,edgeColor),hold <span class="string">on</span>;
+
+<span class="keyword">end</span>
+
+<span class="keyword">for</span>(j =1:5)
+    Y=Lmes2(j).VT(:,1); YE=mean(Y(Lmes2(j).E),2);
+    L=YE&gt;mean(Y);
+    [Fs2,Cs2]=element2patch(Lmes2(j).E(L,:),Lmes2(j).C(L));
+
+    patch(<span class="string">'Faces'</span>,Fs2,<span class="string">'Vertices'</span>,Lmes2(j).VT,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>,<span class="string">'CData'</span>,Cs2,<span class="string">'lineWidth'</span>,0.2,<span class="string">'edgeColor'</span>,edgeColor);
+
+<span class="keyword">end</span>
+axisGeom(gca,fontSize);
+camlight <span class="string">headlight</span>;
+drawnow;
+</pre><img vspace="5" hspace="5" src="DEMO_model_call_04.png" style="width:1382px;height:710px;" alt=""> <h2 id="18">write &amp; run FEBio</h2><p>febio_preprocessing_gui2.m prepares the febio input file. The material properties, contacts and the boundary conditions are defined. This feature is in work in progress. Presently, it can prepare and run (if the flag runFEBio is set equal to 1) the FE model for a single functional unit (FU), level L1-L2 and the IVD in between them. The vertebrae L2 is fully constrained at the bottom surface and the prescribed displacement on the  upper surface is 1 mm.</p><pre class="codeinput">nbodies = 2;
+runFEBio = 1;
+fprintf(<span class="string">'----------------- FE pre-processing: FEBio --------------------\n\n'</span>);
+FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes2,IVD, runFEBio);
+</pre><pre class="codeoutput">----------------- FE pre-processing: FEBio --------------------
+
+import vertebrae dataset
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- Writing FEBio XML object --- 28-Jul-2017 11:43:29
+Adding Module level
+Adding Globals level
+Adding Material level
+Adding Geometry level
+----&gt; Adding node field
+----&gt; Adding element field
+----&gt; Adding tet4 element entries....
+----&gt; Adding tet4 element entries....
+----&gt; Adding hex8 element entries....
+----&gt; Adding surface field
+----&gt; Adding NodeSet field
+Adding Boundary level
+----&gt; Defining fix type boundary conditions
+----&gt; Defining prescribe type boundary conditions
+Adding Contact field
+----&gt; Defining contact
+----&gt; Setting contact parameters
+----&gt; Defining contact surface pair
+----&gt; Setting contact parameters
+----&gt; Defining contact surface pair
+Adding LoadData level
+----&gt; Defining load curves
+Adding Step level
+----&gt; Adding Module field
+----&gt; Adding Control field
+Adding Output level
+----&gt; Adding plotfile field
+----&gt; Adding logfile field
+Writing .feb file
+--- Done --- 28-Jul-2017 11:43:46
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+--- STARTING FEBIO JOB --- 28-Jul-2017 11:43:46
+Waiting for log file...
+Proceeding to check log file...28-Jul-2017 11:43:51
+------- converged at time : 0.1
+------- converged at time : 0.2
+------- converged at time : 0.3
+------- converged at time : 0.4
+------- converged at time : 0.5
+------- converged at time : 0.6
+------- converged at time : 0.7
+------- converged at time : 0.8
+------- converged at time : 0.9
+------- converged at time : 1
+--- Done --- 28-Jul-2017 11:49:41
+</pre><img vspace="5" hspace="5" src="DEMO_model_call_05.png" style="width:1382px;height:710px;" alt=""> <img vspace="5" hspace="5" src="DEMO_model_call_06.png" style="width:1382px;height:710px;" alt=""> <p><i><b>LMG</b></i> <a href="https://celavecchia.github.io/LMG/">https://celavecchia.github.io/LMG/</a></p><p><i>Carolina Eleonora Lavecchia</i>, <a href="lavecchia.carolina@gmail.com">lavecchia.carolina@gmail.com</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear; close all; clc;
+%% Lumbar Model Generator
+% This demo generates a geometric model of the lumbar spine including: 
+% five vertebrae (L1-L5) and four intervertebral disc (IVD). In this demo
+% the dimensions of the bodies are based on the age and height of a person.
+% Then, the geometrical model is meshed, initially with surface meshes and
+% then with solid meshes, using TetGen for the vertebrae and a custom-made
+% algorithm for the IVD.
+% The bodies are oriented according to the lumbar angle, which can be imported
+% by the user or left as default value of 43.49°. Finally, the meshed model
+% is pre-processed to run the simulation in FEBio. Material properties, 
+% contacts and boundary conditions are defined and it can be directly run.
+% In this demo, only a functional unit (L1-L2 and the IVD in-between) is
+% pre-processed and the simulation is directly sent to FEBio.
+%
+%
+% 
+%   for more information: lavecchia.carolina@gmail.com
+
+%% Plotting settings
+%%
+% Define the parameters to use in all the plots
+fontSize=15;
+edgeColor=0.25*ones(1,3);
+edgeWidth=1.5;
+
+%% Control parameters
+%%
+% Define name and location for the febio file 
+
+% file name
+defaultFolder = fileparts(fileparts(mfilename('fullpath')));
+outputpathName=fullfile(defaultFolder,'data','output','tmp');
+febName=fullfile(outputpathName,'model_febio');
+
+
+
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHLMG: LUMBAR MODEL GENERATORREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n\n')
+%%
+% Function to call the gui and start the model. The user can define to use
+% subject-specific dimensions (measured on scans) or average dimensions. The
+% average dimensions are based on the height, age and gender of a person, 
+% and evaluated in the function averageModelInput.m 
+% 
+% The GUI will ask the following inputs:
+% - type of model ( 0 average, 1 subject-specific)
+% if 0, another GUI will ask the following information:
+%   - sex of the patient ( m or f)
+%   - age (in years)
+%   - height (in cm)
+%   - alpha (lumbar curvature angle)
+% If 1
+%  - sex of the patient ( m or f)
+%   - age (in years)
+%   - height (in cm)
+%   - alpha (lumbar curvature angle)
+%   - path of the excel file where the dimensions for each vertebrae and
+%   IVD are saved
+
+[varagout] = GUI_import; 
+
+%% Build default average geometrical model 
+%%
+% If the user decides to use the model based on average dimensions, the
+% function averageModelInput is used. In this function the correlation
+% analysis between the height, age and all the dimensions identified on the
+% vertebrae are evaluated.
+
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Build the geometrical modelREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n');
+ model_type=varagout.type ;
+switch model_type 
+     case 0
+
+         [dimensions] = averageModelInput(varagout);
+         alpha = varagout.alpha;%43.49;
+    case 1
+    
+        dimensions = varagout;
+        alpha = varagout.alpha;
+end
+
+
+%%
+% Use the dimensions obtained to parameterize the model
+[mesh_struct_IVD2,L_vert] = model_elaboration_gui(dimensions);
+
+
+%%
+% Visualizing the meshes for the IVD 
+
+Y=mesh_struct_IVD2(1).V(:,2); YE=mean(Y(mesh_struct_IVD2(1).E),2);
+L=YE>mean(Y);
+[Fs,Cs]=element2patch(mesh_struct_IVD2(1).E(L,:),mesh_struct_IVD2(1).C(L));
+
+cFigure;
+subplot(1,2,1);
+hold on;
+title('Solid hexahedral meshing IVD','FontSize',fontSize); 
+gpatch(mesh_struct_IVD2(1).Fb,mesh_struct_IVD2(1).V,mesh_struct_IVD2(1).faceBoundaryMarker);
+axisGeom(gca,fontSize); 
+camlight headlight;
+colormap(gjet);
+
+subplot(1,2,2);
+hold on;
+title('Cut view of the solid hexahedral mesh model - IVD','FontSize',fontSize);
+gpatch(Fs,mesh_struct_IVD2(1).V,Cs);
+axisGeom(gca,fontSize); 
+camlight headlight;
+colormap(gjet);
+drawnow;
+
+%% Mesh vertebrae
+%%
+% Mesh the vertebrae. Initially obtaining a surface meshed model, that can be exported selecting stl =1
+% Then, the solid meshed model are obtained using TetGen
+
+fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Solid tetrahedral meshingREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+
+stl = 0; %if stl=1 then save the stl files for the vertebrae
+[Lmes] = meshing_vertebrae(stl);
+
+%%
+% Visualizing the mesh obtained for the vertebrae L1. The cut view shows
+% the elements of the vertebrae which correspond to the cancellous (in red)
+% and the cortical bone (in yellow)
+
+Y=Lmes(1).VT(:,1); YE=mean(Y(Lmes(1).E),2);
+L=YE>mean(Y);
+[Fs,Cs]=element2patch(Lmes(1).E(L,:),Lmes(1).C(L));
+
+cFigure;
+subplot(1,2,1);
+hold on; 
+title('Solid tetrahedral meshing','FontSize',fontSize);
+patch('Faces',Lmes(1).FT,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Lmes(1).C,'lineWidth',0.2,'edgeColor',edgeColor);
+axis tight;  axis equal;  %grid on;
+colormap(autumn);
+axisGeom(gca,fontSize); 
+camlight headlight;
+drawnow;
+
+
+hold on; 
+
+subplot(1,2,2);
+title('Cut view of the solid tetrahedral mesh model','FontSize',fontSize);
+patch('Faces',Fs,'Vertices',Lmes(1).VT,'FaceColor','flat','CData',Cs,'lineWidth',0.2,'edgeColor',edgeColor);
+axisGeom(gca,fontSize); 
+colormap(autumn);
+camlight headlight;
+drawnow;
+
+%% orientation post mesh
+% The meshed bodies (vertebrae and IVD) are oriented according to the lumbar
+% curvature 'alpha', imported by the user. 
+
+[CM, CM_IVD,mesh_struct_IVD2,Lmes2, EP] = orientation_gui(Lmes, mesh_struct_IVD2, alpha, dimensions.IVD, dimensions.hL, L_vert);
+
+
+%% 
+% The meshes of the IVD is modified to fit better the curvatures of the
+% vertebrae in order to facilitate the contacts and run a faster
+% simulation.
+
+[IVD] = enforce_contacts(mesh_struct_IVD2,EP);
+
+%% 
+% Visualizing the whole model.
+
+cFigure;
+subplot(1,2,1);
+title('3D orientation','FontSize',fontSize);
+
+for(j=1:4)
+    patch('Faces',IVD(j).FE,'Vertices',IVD(j).V,'FaceColor','b','faceAlpha',0.8,'edgeColor','k','lineWidth',0.5);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    hold on;
+end
+
+for(k=1:5)
+    patch('Faces',Lmes2(k).FT,'Vertices',Lmes2(k).VT,'FaceColor','r','faceAlpha',0.8,'edgeColor','k','lineWidth',0.5);%'flat','CData',C,'lineWidth',edgeWidth,'edgeColor',edgeColor);
+    hold on;
+end
+axisGeom(gca,fontSize);
+colormap(autumn);
+camlight headlight;
+drawnow;
+
+subplot(1,2,2);
+ title('Cut view of the solid meshed model','FontSize',fontSize);
+for(j =1:4)
+    Y=IVD(j).V(:,1); YE=mean(Y(IVD(j).E),2);
+    L=YE>mean(Y);
+    [Fs,Cs]=element2patch(IVD(j).E(L,:),IVD(j).C(L));
+   
+    patch('Faces',Fs,'Vertices',IVD(j).V,'FaceColor','flat','CData',Cs,'lineWidth',0.2,'edgeColor',edgeColor),hold on;
+    
+end
+
+for(j =1:5)
+    Y=Lmes2(j).VT(:,1); YE=mean(Y(Lmes2(j).E),2);
+    L=YE>mean(Y);
+    [Fs2,Cs2]=element2patch(Lmes2(j).E(L,:),Lmes2(j).C(L));
+   
+    patch('Faces',Fs2,'Vertices',Lmes2(j).VT,'FaceColor','flat','CData',Cs2,'lineWidth',0.2,'edgeColor',edgeColor);
+    
+end
+axisGeom(gca,fontSize); 
+camlight headlight;
+drawnow;
+
+
+%% write & run FEBio
+%%
+% febio_preprocessing_gui2.m prepares the febio input file. The material
+% properties, contacts and the boundary conditions are defined. 
+% This feature is in work in progress. Presently, it can prepare and run 
+% (if the flag runFEBio is set equal to 1) the FE model for a single 
+% functional unit (FU), level L1-L2 and the IVD in between them.
+% The vertebrae L2 is fully constrained at the bottom surface and the prescribed displacement
+% on the  upper surface is 1 mm.
+
+nbodies = 2;
+runFEBio = 1;
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- FE pre-processing: FEBio REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+FEB_struct = febio_preprocessing_gui2(febName,nbodies, Lmes2,IVD, runFEBio);
+
+
+%%
+% 
+%
+%
+% _*LMG*_
+% <https://celavecchia.github.io/LMG/>
+%
+% _Carolina Eleonora Lavecchia_, <lavecchia.carolina@gmail.com>
+##### SOURCE END #####
+--></body></html>

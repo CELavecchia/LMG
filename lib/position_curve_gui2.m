@@ -4,9 +4,9 @@
 function [CM,CM_IVD, mesh_struct_IVD2, L_no_r, EP] = position_curve_gui2(L_no_r, mesh_struct_IVD2,  CM,CM_IVD, alpha, hL,rot_angle, IVD, heighV, EP)
   
 
-alpha_lum = alpha;%43.49;
+alpha_lum = alpha;;
 %to obtain more points
-%alpha_lum = 45;
+
 alpha_lum_r = pi*alpha_lum/180; %angle in radians
 
 % total length
@@ -139,8 +139,10 @@ for(body=1:5)
            % plot3(L_no_r(count_v).VT(:,1),L_no_r(count_v).VT(:,2),L_no_r(count_v).VT(:,3),'.r'),hold on;
 
             z_old = z_ip;
-            z1 = z1 - IVD(count_v) - half_h(count_v);
-            count_ang = count_ang +1;
+            if count_v ~= 5
+                z1 = z1 - IVD(count_v) - half_h(count_v);
+            end
+                count_ang = count_ang +1;
             %t(j,:) = [ y_ip-abs(CM(j,8)) z_ip-abs(CM(j,9))];
             count_v = count_v +1;
          

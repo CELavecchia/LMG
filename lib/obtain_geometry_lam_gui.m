@@ -1,5 +1,7 @@
 function [model, facets,nodes] = obtain_geometry_lam( L_body)
 
+warning 'off'
+
 shp = alphaShape(L_body(:,1),L_body(:,2),L_body(:,3),9);
 %plot(shp)
 [facets,nodes] = boundaryFacets(shp);

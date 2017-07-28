@@ -1,5 +1,5 @@
 function [pdem, facets, nodes] = obtain_geometry3(L_body)%
-
+warning 'off'
 %L = [L_ped_dx;L_body];%lam_new];
 L = [L_body];
 %plot3(L(:,1),L(:,2),L(:,3),'.r');

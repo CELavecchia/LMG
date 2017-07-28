@@ -97,7 +97,6 @@ lam_inf_fac_min =  L_lam(L_lam(:,2)<max(L_lam(:,2))-5 & L_lam(:,2)>max(L_lam(:,2
 dist_TP_wi = abs(minim_min(1)); %symmetric to zero, x distance
 sc_TP_wi = (TP_wi/2)/dist_TP_wi; %scaling factor
 
-
 % do the same procedure for inferior_proc_min and max
 cut_min = -5;
 cut_max = 5;

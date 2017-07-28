@@ -41,7 +41,7 @@ lam_l = dimensions.lam_l;
 sc_d=dimensions.sc_d;
 sc_w=dimensions.sc_w;
 TP_wu=dimensions.TP_wu;
-TP_wi=dimensions.TP_wi;
+TP_wi=dimensions.TP_wi; 
 PDt=dimensions.PDt;
 PDs=dimensions.PDs;
 
@@ -57,7 +57,7 @@ for (j = 1:5)
     remove_overlap_gui(L_body_nt_r(:,ind:ind+2), L.vert_nt.L_proc_grid_nt(:,ind:ind+2),...
     L.vert_nt.L_lam_nt(:,ind:ind+2),L.Vsurf_sup.EP_sup(:,ind:ind+2),L.Vsurf_inf.EP_inf(:,ind:ind+2), ...
     EPWu_half(j), EPDu(j), hL(j), lam_l(j), sc_d(j), sc_w(j), PDW(j), PDH(j),...
-    TP_wu(j), TP_wi(j), PDt(j),PDs(j));
+    TP_wu(j),TP_wi(j), PDt(j),PDs(j));
 
     L_no(j).body = L_body_rem;
     L_no(j).proc = L_proc_rem;
