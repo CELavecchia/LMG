@@ -7,6 +7,7 @@ header-img: "img/home-bg.jpg"
 ---
 
 ![LMG_logo](img/logos/logo.png){:width="100%"}
+Cite LMG: <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.835756.svg" alt="DOI_logo" width="50%">
 
 # Table of contents
 - [Project Summary](#Summary)  
