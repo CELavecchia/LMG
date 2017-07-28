@@ -1,7 +1,7 @@
 # LMG: Lumbar Model Generator
 
 <img src="docs/img/logos/logo.png" alt="LMG_logo" width="100%">
-Cite LMG : [![Citing](https://zenodo.org/badge/DOI/10.5281/zenodo.835756.svg)] (https://doi.org/10.5281/zenodo.835756)
+Cite LMG: [![Citing](https://zenodo.org/badge/DOI/10.5281/zenodo.835756.svg)](https://doi.org/10.5281/zenodo.835756)
 
 
 # Table of contents
